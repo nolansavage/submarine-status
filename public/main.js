@@ -10,7 +10,8 @@ function updateClock() {
   const h = pad(now.getHours());
   const m = pad(now.getMinutes());
   const s = pad(now.getSeconds());
-  document.getElementById("clock").textContent = `${h}:${m}:${s}`;
+  const clockEl = document.getElementById("clock");
+  if (clockEl) clockEl.textContent = `${h}:${m}:${s}`;
 }
 
 function updateUptime() {
@@ -19,41 +20,53 @@ function updateUptime() {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  document.getElementById("uptime").textContent =
+  const uptimeEl = document.getElementById("uptime");
+  if (uptimeEl) uptimeEl.textContent =
     `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 }
 
 // Diagnostics
 function populateDiagnostics() {
   const nav = navigator;
-  document.getElementById("os").textContent = nav.userAgent;
 
-  document.getElementById("browser").textContent = nav.userAgentData
-    ? nav.userAgentData.brands.map(b => b.brand).join(", ")
-    : "Unknown";
+  const osEl = document.getElementById("os");
+  if (osEl) osEl.textContent = nav.userAgent;
 
-  document.getElementById("cores").textContent =
-    nav.hardwareConcurrency || "N/A";
-
-  if (nav.deviceMemory) {
-    document.getElementById("memory").textContent = nav.deviceMemory.toFixed(1);
-  } else {
-    document.getElementById("memory").textContent = "N/A";
+  const browserEl = document.getElementById("browser");
+  if (browserEl) {
+    browserEl.textContent = nav.userAgentData
+      ? nav.userAgentData.brands.map(b => b.brand).join(", ")
+      : "Unknown";
   }
 
-  document.getElementById("screen").textContent =
-    `${window.screen.width} x ${window.screen.height}`;
+  const coresEl = document.getElementById("cores");
+  if (coresEl) coresEl.textContent = nav.hardwareConcurrency || "N/A";
 
-  if (nav.getBattery) {
+  const memEl = document.getElementById("memory");
+  if (memEl) {
+    if (nav.deviceMemory) {
+      memEl.textContent = nav.deviceMemory.toFixed(1);
+    } else {
+      memEl.textContent = "N/A";
+    }
+  }
+
+  const screenEl = document.getElementById("screen");
+  if (screenEl) {
+    screenEl.textContent = `${window.screen.width} x ${window.screen.height}`;
+  }
+
+  const batteryEl = document.getElementById("battery");
+  if (nav.getBattery && batteryEl) {
     nav.getBattery().then(battery => {
       const pct = Math.round(battery.level * 100);
       const status = battery.charging ? "CHARGING" : "DISCHARGING";
-      document.getElementById("battery").textContent = `${pct}% (${status})`;
+      batteryEl.textContent = `${pct}% (${status})`;
     }).catch(() => {
-      document.getElementById("battery").textContent = "N/A";
+      batteryEl.textContent = "N/A";
     });
-  } else {
-    document.getElementById("battery").textContent = "N/A";
+  } else if (batteryEl) {
+    batteryEl.textContent = "N/A";
   }
 }
 
@@ -73,6 +86,7 @@ const alertMessages = [
 
 function pushAlert(msg) {
   const log = document.getElementById("alerts-log");
+  if (!log) return;
   const li = document.createElement("li");
   const ts = new Date().toLocaleTimeString();
   li.textContent = `[${ts}] ${msg}`;
@@ -93,6 +107,7 @@ function startAlerts() {
 // Terminal
 function pushTerminal(text) {
   const out = document.getElementById("terminal-output");
+  if (!out) return;
   const line = document.createElement("div");
   line.textContent = text;
   out.appendChild(line);
@@ -126,7 +141,8 @@ function handleCommand(cmd) {
       forceGPSLock();
       break;
     case "clear":
-      document.getElementById("terminal-output").innerHTML = "";
+      const out = document.getElementById("terminal-output");
+      if (out) out.innerHTML = "";
       break;
     default:
       pushTerminal("Unknown command. Type 'help' for list.");
@@ -148,15 +164,21 @@ function loadWeather() {
   const wind = (Math.random() * 30).toFixed(0);
   const humidity = (60 + Math.random() * 30).toFixed(0);
 
-  document.getElementById("weather-condition").textContent = cond;
-  document.getElementById("weather-temp").textContent = `${temp} °C`;
-  document.getElementById("weather-wind").textContent = `${wind} km/h`;
-  document.getElementById("weather-humidity").textContent = `${humidity}%`;
+  const condEl = document.getElementById("weather-condition");
+  const tempEl = document.getElementById("weather-temp");
+  const windEl = document.getElementById("weather-wind");
+  const humEl = document.getElementById("weather-humidity");
+
+  if (condEl) condEl.textContent = cond;
+  if (tempEl) tempEl.textContent = `${temp} °C`;
+  if (windEl) windEl.textContent = `${wind} km/h`;
+  if (humEl) humEl.textContent = `${humidity}%`;
 }
 
 // Reddit placeholder
 function loadRedditPlaceholder() {
   const list = document.getElementById("reddit-trending");
+  if (!list) return;
   list.innerHTML = "";
 
   const items = [
@@ -178,10 +200,18 @@ function loadRedditPlaceholder() {
 function randomEngineStatus() {
   const heatStates = ["NORMAL", "ELEVATED", "HIGH", "CRITICAL"];
   const thrustStates = ["STABLE", "INCREASING", "DECREASING"];
-  document.getElementById("engine-heat").textContent =
-    heatStates[Math.floor(Math.random() * heatStates.length)];
-  document.getElementById("engine-thrust").textContent =
-    thrustStates[Math.floor(Math.random() * thrustStates.length)];
+
+  const heatEl = document.getElementById("engine-heat");
+  const thrustEl = document.getElementById("engine-thrust");
+
+  if (heatEl) {
+    heatEl.textContent =
+      heatStates[Math.floor(Math.random() * heatStates.length)];
+  }
+  if (thrustEl) {
+    thrustEl.textContent =
+      thrustStates[Math.floor(Math.random() * thrustStates.length)];
+  }
 }
 
 // GPS Map
@@ -211,13 +241,17 @@ function initMap(lat, lon) {
 
 function setupGPSMapInitial() {
   initMap(43.8971, -78.8658);
-  document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
+  const fixEl = document.getElementById("gps-last-fix");
+  if (fixEl) fixEl.textContent = "OSHAWA (FALLBACK)";
 }
 
 function forceGPSLock() {
+  const navStatusEl = document.getElementById("engine-nav");
+  const fixEl = document.getElementById("gps-last-fix");
+
   if (!navigator.geolocation) {
     pushTerminal("GPS not available on this device.");
-    document.getElementById("engine-nav").textContent = "OFFLINE";
+    if (navStatusEl) navStatusEl.textContent = "OFFLINE";
     return;
   }
 
@@ -226,14 +260,14 @@ function forceGPSLock() {
       const { latitude, longitude } = pos.coords;
       initMap(latitude, longitude);
       const fixText = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-      document.getElementById("gps-last-fix").textContent = fixText;
-      document.getElementById("engine-nav").textContent = "LOCKED";
+      if (fixEl) fixEl.textContent = fixText;
+      if (navStatusEl) navStatusEl.textContent = "LOCKED";
       pushTerminal(`GPS lock acquired: ${fixText}.`);
     },
     () => {
       pushTerminal("GPS denied or unavailable. Holding position over Oshawa.");
-      document.getElementById("engine-nav").textContent = "OFFLINE";
-      document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
+      if (navStatusEl) navStatusEl.textContent = "OFFLINE";
+      if (fixEl) fixEl.textContent = "OSHAWA (FALLBACK)";
       initMap(43.8971, -78.8658);
     },
     { enableHighAccuracy: true, timeout: 8000 }
@@ -396,7 +430,28 @@ function updateGalaxyMap() {
   statusEl.textContent = pick.status;
 }
 
-// Aerial Traffic Monitor — Live Aircraft
+// Aerial Traffic Monitor — map + log
+let airTrafficMap;
+let airTrafficMarkers = [];
+
+function initAirTrafficMap() {
+  const mapDiv = document.getElementById("air-traffic-map");
+  if (!mapDiv) return;
+
+  if (!airTrafficMap) {
+    airTrafficMap = L.map("air-traffic-map").setView([43.9, -78.9], 9);
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 19 }
+    ).addTo(airTrafficMap);
+  }
+}
+
+function clearAirTrafficMarkers() {
+  airTrafficMarkers.forEach(m => m.remove());
+  airTrafficMarkers = [];
+}
+
 function pushAirTraffic(msg) {
   const log = document.getElementById("air-traffic-log");
   if (!log) return;
@@ -413,29 +468,56 @@ function pushAirTraffic(msg) {
 }
 
 async function updateAirTraffic() {
+  initAirTrafficMap();
+
   try {
-    // Oshawa bounding box (approx)
+    // Larger region around Southern Ontario
     const url =
-      "https://opensky-network.org/api/states/all?lamin=43.8&lomin=-79.1&lamax=44.1&lomax=-78.7";
+      "https://opensky-network.org/api/states/all?lamin=42.5&lomin=-81&lamax=45.5&lomax=-76";
 
     const res = await fetch(url);
     const data = await res.json();
 
     if (!data.states || data.states.length === 0) {
-      pushAirTraffic("No aircraft detected in local airspace.");
+      pushAirTraffic("No aircraft detected in regional airspace.");
+      clearAirTrafficMarkers();
       return;
     }
 
-    const plane = data.states[0]; // first plane
+    clearAirTrafficMarkers();
 
-    const callsign = plane[1] ? plane[1].trim() : "UNKNOWN";
-    const altitude = plane[13] ? Math.round(plane[13]) + " m" : "N/A";
-    const velocity = plane[9] ? Math.round(plane[9]) + " m/s" : "N/A";
-    const heading = plane[10] ? Math.round(plane[10]) + "°" : "N/A";
+    data.states.slice(0, 10).forEach(plane => {
+      const callsign = plane[1] ? plane[1].trim() : "UNKNOWN";
+      const lat = plane[6];
+      const lon = plane[5];
+      const altitude = plane[13] ? Math.round(plane[13]) : null;
+      const velocity = plane[9] ? Math.round(plane[9]) : null;
+      const heading = plane[10] ? Math.round(plane[10]) : null;
 
-    pushAirTraffic(
-      `Plane ${callsign} — Alt: ${altitude}, Speed: ${velocity}, Heading: ${heading}`
-    );
+      if (lat && lon) {
+        const marker = L.circleMarker([lat, lon], {
+          radius: 4,
+          color: "#00ffff",
+          fillColor: "#00ffff",
+          fillOpacity: 0.8
+        }).addTo(airTrafficMap);
+
+        const altText = altitude !== null ? `${altitude} m` : "N/A";
+        const velText = velocity !== null ? `${velocity} m/s` : "N/A";
+        const headText = heading !== null ? `${heading}°` : "N/A";
+
+        marker.bindTooltip(
+          `${callsign}<br>Alt: ${altText}<br>Speed: ${velText}<br>Heading: ${headText}`,
+          { permanent: false, direction: "top" }
+        );
+
+        airTrafficMarkers.push(marker);
+
+        pushAirTraffic(
+          `Plane ${callsign} — Alt: ${altText}, Speed: ${velText}, Heading: ${headText}`
+        );
+      }
+    });
   } catch (err) {
     pushAirTraffic("Airspace scan failed — connection issue.");
   }
@@ -499,6 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateGalaxyMap, 30000);
 
   // Aerial Traffic Monitor
+  initAirTrafficMap();
   updateAirTraffic();
   setInterval(updateAirTraffic, 20000);
 
