@@ -295,3 +295,10 @@ body {
   line-height: 1.4;
   box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.3);
 }
+
+/* AERIAL TRAFFIC MONITOR */
+#air-traffic-log li {
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+  font-size: 12px;
+}
