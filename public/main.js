@@ -1,277 +1,375 @@
-// Clock + uptime
-let startTime = Date.now();
-
-function pad(n) {
-  return n < 10 ? "0" + n : "" + n;
+// Simple helper
+function $(id) {
+  return document.getElementById(id);
 }
 
-function updateClock() {
-  const now = new Date();
-  const h = pad(now.getHours());
-  const m = pad(now.getMinutes());
-  const s = pad(now.getSeconds());
-  document.getElementById("clock").textContent = `${h}:${m}:${s}`;
-}
+/* ---------------- ASTRONAUT ---------------- */
 
-function updateUptime() {
-  const diff = Date.now() - startTime;
-  const totalSeconds = Math.floor(diff / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  document.getElementById("uptime").textContent =
-    `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
-}
-
-// Diagnostics
-function populateDiagnostics() {
-  const nav = navigator;
-  document.getElementById("os").textContent = nav.userAgent;
-
-  document.getElementById("browser").textContent = nav.userAgentData
-    ? nav.userAgentData.brands.map(b => b.brand).join(", ")
-    : "Unknown";
-
-  document.getElementById("cores").textContent =
-    nav.hardwareConcurrency || "N/A";
-
-  if (nav.deviceMemory) {
-    document.getElementById("memory").textContent = nav.deviceMemory.toFixed(1);
-  } else {
-    document.getElementById("memory").textContent = "N/A";
-  }
-
-  document.getElementById("screen").textContent =
-    `${window.screen.width} x ${window.screen.height}`;
-
-  if (nav.getBattery) {
-    nav.getBattery().then(battery => {
-      const pct = Math.round(battery.level * 100);
-      const status = battery.charging ? "CHARGING" : "DISCHARGING";
-      document.getElementById("battery").textContent = `${pct}% (${status})`;
-    }).catch(() => {
-      document.getElementById("battery").textContent = "N/A";
-    });
-  } else {
-    document.getElementById("battery").textContent = "N/A";
-  }
-}
-
-// Alerts
-const alertMessages = [
-  "Hull integrity nominal.",
-  "Pressure stable across all compartments.",
-  "Sonar sweep complete. No hostiles detected.",
-  "Thermal vents detected off port side.",
-  "Navigation buoy acquired.",
-  "Communications link stable.",
-  "Ballast tanks balanced.",
-  "Engine output within safe parameters.",
-  "External temperature within expected range.",
-  "Radiation levels nominal."
+const astroLines = [
+  "Space is cold. Send snacks.",
+  "Nolan, I drift therefore I am.",
+  "Zero gravity? More like zero motivation.",
+  "I saw a space whale once. It winked.",
+  "This flag is heavy emotionally.",
+  "I’m not lost. I’m exploring.",
 ];
 
-function pushAlert(msg) {
-  const log = document.getElementById("alerts-log");
-  const li = document.createElement("li");
-  const ts = new Date().toLocaleTimeString();
-  li.textContent = `[${ts}] ${msg}`;
-  log.insertBefore(li, log.firstChild);
-  while (log.children.length > 12) {
-    log.removeChild(log.lastChild);
-  }
+function showAstronautBubble() {
+  const bubble = $("astro-bubble");
+  const line = astroLines[Math.floor(Math.random() * astroLines.length)];
+  bubble.textContent = line;
+  bubble.style.opacity = 1;
+  setTimeout(() => {
+    bubble.style.opacity = 0;
+  }, 5000);
 }
 
-function startAlerts() {
-  pushAlert("System startup complete. All stations nominal.");
-  setInterval(() => {
-    const msg = alertMessages[Math.floor(Math.random() * alertMessages.length)];
-    pushAlert(msg);
-  }, 7000);
+setInterval(showAstronautBubble, 25000);
+
+/* ---------------- MUSIC VISUALIZER ---------------- */
+
+const bars = Array.from(document.querySelectorAll("#visualizerBars .bar"));
+
+function pulseVisualizer() {
+  bars.forEach(bar => {
+    const h = 10 + Math.random() * 50;
+    bar.style.height = `${h}px`;
+  });
 }
 
-// Terminal
-function pushTerminal(text) {
-  const out = document.getElementById("terminal-output");
-  const line = document.createElement("div");
-  line.textContent = text;
-  out.appendChild(line);
-  out.scrollTop = out.scrollHeight;
+setInterval(pulseVisualizer, 300);
+
+/* ---------------- BREAKING NEWS ---------------- */
+
+// NOTE: Replace this with a real news API + key if you want live headlines.
+const mockNews = [
+  "NASA announces new lunar EVA schedule.",
+  "Ontario issues updated weather advisory.",
+  "Major tech firm reveals new AI hardware.",
+  "International summit begins in Geneva.",
+  "Markets react to sector volatility.",
+];
+
+function updateNews() {
+  const body = $("newsBody");
+  body.innerHTML = "";
+  mockNews.forEach(h => {
+    const p = document.createElement("p");
+    p.textContent = "• " + h;
+    body.appendChild(p);
+  });
 }
 
-function handleCommand(cmd) {
-  const c = cmd.trim().toLowerCase();
-  if (!c) return;
+updateNews();
 
-  pushTerminal("> " + cmd);
+/* ---------------- SYSTEM GLITCHES ---------------- */
 
-  switch (c) {
-    case "help":
-      pushTerminal("Commands: status, diagnostics, sonar, map, gps, clear, help");
-      break;
-    case "status":
-      pushTerminal("All systems nominal. Mission time increasing.");
-      break;
-    case "diagnostics":
-      pushTerminal("Diagnostics panel shows current system status.");
-      break;
-    case "sonar":
-      pushTerminal("Sonar sweep active. No anomalies detected.");
-      break;
-    case "map":
-      pushTerminal("Tactical map tracking current position or Oshawa fallback.");
-      break;
-    case "gps":
-      pushTerminal("Attempting GPS lock via navigation control...");
-      forceGPSLock();
-      break;
-    case "clear":
-      document.getElementById("terminal-output").innerHTML = "";
-      break;
-    default:
-      pushTerminal("Unknown command. Type 'help' for list.");
-  }
+const glitchMessages = [
+  "Quantum flux spike detected.",
+  "Temporal echo from future self.",
+  "Hull resonance anomaly.",
+  "Ghost packet in network buffer.",
+  "Unclassified subspace interference.",
+];
+
+function addGlitch() {
+  const log = $("glitchLog");
+  const msg = glitchMessages[Math.floor(Math.random() * glitchMessages.length)];
+  const p = document.createElement("p");
+  p.textContent = msg;
+  log.appendChild(p);
+  log.scrollTop = log.scrollHeight;
 }
 
-// Weather (mocked for Oshawa)
-function loadWeather() {
-  const conditions = [
-    "Overcast with lake-effect clouds.",
-    "Cold, clear night over Oshawa.",
-    "Rain showers moving in from the west.",
-    "Fog rolling in over the shoreline.",
-    "Windy with scattered clouds.",
-    "Calm skies, high visibility."
-  ];
-  const cond = conditions[Math.floor(Math.random() * conditions.length)];
-  const temp = (Math.random() * 15 - 5).toFixed(1); // -5 to +10
-  const wind = (Math.random() * 30).toFixed(0); // 0–30 km/h
-  const humidity = (60 + Math.random() * 30).toFixed(0); // 60–90%
+setInterval(addGlitch, 45000);
 
-  document.getElementById("weather-condition").textContent = cond;
-  document.getElementById("weather-temp").textContent = `${temp} °C`;
-  document.getElementById("weather-wind").textContent = `${wind} km/h`;
-  document.getElementById("weather-humidity").textContent = `${humidity}%`;
+/* ---------------- TRANSMISSIONS ---------------- */
+
+const transmissions = [
+  "Encrypted message received. Decoding…",
+  "Message: Stay hydrated.",
+  "Message: The universe is watching.",
+  "Message: You’re doing great, Nolan.",
+  "Message: Do not feed the reactor.",
+];
+
+function updateTransmission() {
+  const body = $("transmissionBody");
+  const msg = transmissions[Math.floor(Math.random() * transmissions.length)];
+  body.innerHTML = `<p>${msg}</p>`;
 }
 
-// Reddit placeholder
-function loadRedditPlaceholder() {
-  const list = document.getElementById("reddit-trending");
+setInterval(updateTransmission, 60000);
+
+/* ---------------- CREW SYSTEM ---------------- */
+
+const crew = [
+  {
+    id: "nolan",
+    name: "Captain Nolan",
+    role: "Command",
+    mood: "calm",
+    portrait: "img/crew_nolan.png",
+  },
+  {
+    id: "ai",
+    name: "AI Core Unit‑7",
+    role: "Ship AI",
+    mood: "annoyed",
+    portrait: "img/crew_ai.png",
+  },
+  {
+    id: "marla",
+    name: "Chief Marla",
+    role: "Engineering",
+    mood: "stressed",
+    portrait: "img/crew_marla.png",
+  },
+  {
+    id: "jax",
+    name: "Officer Jax",
+    role: "Sonar",
+    mood: "chill",
+    portrait: "img/crew_jax.png",
+  },
+  {
+    id: "pip",
+    name: "Janitor Pip",
+    role: "Maintenance",
+    mood: "missing",
+    portrait: "img/crew_pip.png",
+  },
+];
+
+// Simple mood rotation
+const moods = ["calm", "annoyed", "stressed", "confused", "excited", "bored", "panicking", "suspicious", "sleepy"];
+
+function randomMood() {
+  return moods[Math.floor(Math.random() * moods.length)];
+}
+
+function renderCrewStatus() {
+  const list = $("crewStatusList");
   list.innerHTML = "";
-
-  const items = [
-    "r/AskReddit — \"What’s a subtle sign someone is not okay?\"",
-    "r/technology — \"New GPU architecture shakes up the market.\"",
-    "r/gaming — \"Underrated indie games you should try.\"",
-    "r/canada — \"Lake-effect weather stories from Ontario.\"",
-    "r/programming — \"Show off your side projects.\""
-  ];
-
-  items.forEach(text => {
+  crew.forEach(member => {
     const li = document.createElement("li");
-    li.textContent = text;
+    li.textContent = `${member.name} ........ ${member.mood.toUpperCase()}`;
     list.appendChild(li);
   });
 }
 
-// Engine status (simple flavor)
-function randomEngineStatus() {
-  const heatStates = ["NORMAL", "ELEVATED", "HIGH", "CRITICAL"];
-  const thrustStates = ["STABLE", "INCREASING", "DECREASING"];
-  document.getElementById("engine-heat").textContent =
-    heatStates[Math.floor(Math.random() * heatStates.length)];
-  document.getElementById("engine-thrust").textContent =
-    thrustStates[Math.floor(Math.random() * thrustStates.length)];
+function renderCrewPortraitRow() {
+  const row = $("crewPortraitRow");
+  row.innerHTML = "";
+  crew.forEach(member => {
+    const div = document.createElement("div");
+    div.className = "crew-portrait";
+
+    const img = document.createElement("img");
+    img.src = member.portrait; // add your 32x32 Stardew-style sprites here
+
+    const info = document.createElement("div");
+    const name = document.createElement("div");
+    name.textContent = member.name;
+    const role = document.createElement("div");
+    role.textContent = member.role;
+    const mood = document.createElement("div");
+    mood.className = "crew-mood";
+    mood.textContent = `Mood: ${member.mood}`;
+
+    info.appendChild(name);
+    info.appendChild(role);
+    info.appendChild(mood);
+
+    div.appendChild(img);
+    div.appendChild(info);
+    row.appendChild(div);
+  });
 }
 
-// GPS Map (Leaflet)
-let map;
-let gpsMarker;
+function addCrewLine(member, text) {
+  const log = $("crewLog");
+  const line = document.createElement("div");
+  line.className = "crew-line";
 
-function initMap(lat, lon) {
-  if (!map) {
-    map = L.map("map").setView([lat, lon], 13);
-    L.tileLayer(
-      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      { maxZoom: 19 }
-    ).addTo(map);
-  } else {
-    map.setView([lat, lon], 13);
-  }
+  const img = document.createElement("img");
+  img.src = member.portrait;
 
-  if (gpsMarker) {
-    gpsMarker.remove();
-  }
+  const nameSpan = document.createElement("span");
+  nameSpan.className = "name";
+  nameSpan.textContent = member.name + ":";
 
-  gpsMarker = L.circleMarker([lat, lon], {
-    radius: 6,
-    color: "#00ffff",
-    fillColor: "#00ffff",
-    fillOpacity: 0.8
-  }).addTo(map);
+  const textSpan = document.createElement("span");
+  textSpan.textContent = " " + text;
+
+  line.appendChild(img);
+  line.appendChild(nameSpan);
+  line.appendChild(textSpan);
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
 }
 
-function setupGPSMapInitial() {
-  // Initial map: Oshawa fallback
-  initMap(43.8971, -78.8658);
-  document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
-}
+// Hybrid personality: some canned flavor + simple dynamic generation
+function generateCrewResponse(member, userText) {
+  const lower = userText.toLowerCase();
+  const mood = member.mood;
 
-function forceGPSLock() {
-  if (!navigator.geolocation) {
-    pushTerminal("GPS not available on this device.");
-    document.getElementById("engine-nav").textContent = "OFFLINE";
-    return;
-  }
+  // Simple intent detection
+  const askingStatus = lower.includes("status") || lower.includes("report");
+  const askingWhere = lower.includes("where");
+  const askingReactor = lower.includes("reactor");
+  const askingGlitch = lower.includes("glitch");
+  const askingSonar = lower.includes("sonar");
 
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const { latitude, longitude } = pos.coords;
-      initMap(latitude, longitude);
-      const fixText = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-      document.getElementById("gps-last-fix").textContent = fixText;
-      document.getElementById("engine-nav").textContent = "LOCKED";
-      pushTerminal(`GPS lock acquired: ${fixText}.`);
-    },
-    (err) => {
-      pushTerminal("GPS denied or unavailable. Holding position over Oshawa.");
-      document.getElementById("engine-nav").textContent = "OFFLINE";
-      document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
-      initMap(43.8971, -78.8658);
-    },
-    { enableHighAccuracy: true, timeout: 8000 }
-  );
-}
-
-// Init
-document.addEventListener("DOMContentLoaded", () => {
-  updateClock();
-  updateUptime();
-  setInterval(updateClock, 1000);
-  setInterval(updateUptime, 1000);
-
-  populateDiagnostics();
-  startAlerts();
-  loadWeather();
-  loadRedditPlaceholder();
-  randomEngineStatus();
-  setupGPSMapInitial();
-
-  const input = document.getElementById("terminal-input");
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      handleCommand(input.value);
-      input.value = "";
+  if (member.id === "marla") {
+    if (askingReactor || askingStatus) {
+      if (mood === "stressed" || mood === "panicking") {
+        return "The reactor is humming in a way I don’t like. If it explodes, I’m blaming Pip.";
+      }
+      return "Reactor’s stable-ish. I wouldn’t bet my lunch on it.";
     }
-  });
+    if (askingGlitch) {
+      return "Every glitch is just the universe screaming at our wiring.";
+    }
+    return "I’m busy keeping this bucket of bolts together with duct tape and spite.";
+  }
 
-  const gpsBtn = document.getElementById("gps-lock-btn");
-  gpsBtn.addEventListener("click", () => {
-    pushTerminal("Navigation control: attempting GPS lock...");
-    forceGPSLock();
-  });
+  if (member.id === "ai") {
+    if (askingGlitch || askingStatus) {
+      return "I have detected multiple anomalies. None are fatal. Yet.";
+    }
+    if (lower.includes("malfunction")) {
+      return "I do not malfunction. I simply exceed expectations in unconventional ways.";
+    }
+    return "Statistically, most of our problems are human-made. I am merely observing.";
+  }
 
-  pushTerminal("Submarine command console online.");
-  pushTerminal("Type 'help' for available commands.");
+  if (member.id === "jax") {
+    if (askingSonar || askingStatus) {
+      return "Sonar picked up something big and weird. I’m pretending I didn’t hear it.";
+    }
+    return "If the universe is infinite, so are my problems.";
+  }
+
+  if (member.id === "pip") {
+    if (askingWhere) {
+      return "In the vents. I found a sandwich. It winked at me.";
+    }
+    return "I saw the astronaut again. He waved. I think we’re friends now.";
+  }
+
+  if (member.id === "nolan") {
+    if (askingStatus || askingReport) {
+      return "We’re fine. Probably. I choose to believe that.";
+    }
+    return "Command is calm. Or pretending to be.";
+  }
+
+  // Fallback generic
+  return "I’m thinking about that and choosing not to panic.";
+}
+
+// group chatter
+function crewAmbientChatter() {
+  const member = crew[Math.floor(Math.random() * crew.length)];
+  const lines = {
+    nolan: [
+      "If anyone touches my coffee mug again, I swear.",
+      "We are not lost. We are exploring.",
+    ],
+    ai: [
+      "Sarcasm detected. Logging it as a threat.",
+      "I am not malfunctioning. I am improvising.",
+    ],
+    marla: [
+      "If it explodes, that’s on you.",
+      "I need more duct tape. And snacks.",
+    ],
+    jax: [
+      "I swear I heard a space whale.",
+      "Something is out there. Probably friendly.",
+    ],
+    pip: [
+      "Someone spilled cosmic goo again.",
+      "I found a sandwich in the ventilation shaft.",
+    ],
+  };
+
+  const pool = lines[member.id] || ["I have thoughts. They are chaotic."];
+  const text = pool[Math.floor(Math.random() * pool.length)];
+  addCrewLine(member, text);
+}
+
+setInterval(crewAmbientChatter, 40000);
+
+/* ---------------- CREW CHAT INPUT ---------------- */
+
+$("crewSend").addEventListener("click", handleCrewInput);
+$("crewInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") handleCrewInput();
 });
 
+function handleCrewInput() {
+  const input = $("crewInput");
+  const raw = input.value.trim();
+  if (!raw) return;
+
+  // Echo user line
+  const log = $("crewLog");
+  const userLine = document.createElement("div");
+  userLine.className = "crew-line";
+  const userName = document.createElement("span");
+  userName.className = "name";
+  userName.textContent = "You:";
+  const userText = document.createElement("span");
+  userText.textContent = " " + raw;
+  userLine.appendChild(userName);
+  userLine.appendChild(userText);
+  log.appendChild(userLine);
+  log.scrollTop = log.scrollHeight;
+
+  input.value = "";
+
+  // Parse target
+  const lower = raw.toLowerCase();
+  let target = null;
+  if (lower.startsWith("crew ")) {
+    const afterCrew = lower.slice(5);
+    if (afterCrew.startsWith("all")) {
+      target = "all";
+    } else if (afterCrew.startsWith("nolan")) {
+      target = "nolan";
+    } else if (afterCrew.startsWith("ai")) {
+      target = "ai";
+    } else if (afterCrew.startsWith("marla")) {
+      target = "marla";
+    } else if (afterCrew.startsWith("jax")) {
+      target = "jax";
+    } else if (afterCrew.startsWith("pip")) {
+      target = "pip";
+    }
+  }
+
+  const messagePart = raw.split(":").slice(1).join(":").trim() || raw;
+
+  if (target === "all") {
+    crew.forEach(member => {
+      member.mood = randomMood();
+      const text = generateCrewResponse(member, messagePart);
+      addCrewLine(member, text);
+    });
+  } else {
+    const member = crew.find(c => c.id === target) || crew[0];
+    member.mood = randomMood();
+    const text = generateCrewResponse(member, messagePart);
+    addCrewLine(member, text);
+  }
+
+  renderCrewStatus();
+  renderCrewPortraitRow();
+}
+
+/* ---------------- INIT ---------------- */
+
+renderCrewStatus();
+renderCrewPortraitRow();
