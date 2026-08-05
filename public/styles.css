@@ -252,7 +252,7 @@ body {
   position: fixed;
   top: 20%;
   left: 10%;
-  opacity: 0.15;
+  opacity: 0.50;
   z-index: -2;
   animation: astro-drift 40s linear infinite;
   text-align: center;
