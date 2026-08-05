@@ -430,7 +430,7 @@ function updateGalaxyMap() {
   statusEl.textContent = pick.status;
 }
 
-// Aerial Traffic Monitor — map + log
+// Aerial Traffic Monitor — ADS-B Exchange, Southern Ontario
 let airTrafficMap;
 let airTrafficMarkers = [];
 
@@ -439,7 +439,7 @@ function initAirTrafficMap() {
   if (!mapDiv) return;
 
   if (!airTrafficMap) {
-    airTrafficMap = L.map("air-traffic-map").setView([43.9, -78.9], 9);
+    airTrafficMap = L.map("air-traffic-map").setView([43.9, -78.9], 8);
     L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       { maxZoom: 19 }
@@ -471,52 +471,70 @@ async function updateAirTraffic() {
   initAirTrafficMap();
 
   try {
-    // Larger region around Southern Ontario
-    const url =
-      "https://opensky-network.org/api/states/all?lamin=42.5&lomin=-81&lamax=45.5&lomax=-76";
-
+    // ADS-B Exchange JSON feed
+    const url = "https://adsbexchange.com/api/aircraft/json/";
     const res = await fetch(url);
     const data = await res.json();
 
-    if (!data.states || data.states.length === 0) {
+    if (!data.aircraft || data.aircraft.length === 0) {
       pushAirTraffic("No aircraft detected in regional airspace.");
       clearAirTrafficMarkers();
       return;
     }
 
+    // Southern Ontario bounding box
+    const minLat = 42.5;
+    const maxLat = 45.0;
+    const minLon = -81.0;
+    const maxLon = -76.0;
+
+    const regional = data.aircraft.filter(a => {
+      return (
+        typeof a.lat === "number" &&
+        typeof a.lon === "number" &&
+        a.lat >= minLat &&
+        a.lat <= maxLat &&
+        a.lon >= minLon &&
+        a.lon <= maxLon
+      );
+    });
+
     clearAirTrafficMarkers();
 
-    data.states.slice(0, 10).forEach(plane => {
-      const callsign = plane[1] ? plane[1].trim() : "UNKNOWN";
-      const lat = plane[6];
-      const lon = plane[5];
-      const altitude = plane[13] ? Math.round(plane[13]) : null;
-      const velocity = plane[9] ? Math.round(plane[9]) : null;
-      const heading = plane[10] ? Math.round(plane[10]) : null;
+    if (regional.length === 0) {
+      pushAirTraffic("No aircraft currently over Southern Ontario.");
+      return;
+    }
 
-      if (lat && lon) {
-        const marker = L.circleMarker([lat, lon], {
-          radius: 4,
-          color: "#00ffff",
-          fillColor: "#00ffff",
-          fillOpacity: 0.8
-        }).addTo(airTrafficMap);
+    regional.slice(0, 15).forEach(a => {
+      const callsign = a.flight || "UNKNOWN";
+      const lat = a.lat;
+      const lon = a.lon;
+      const altitude = a.alt_baro ? Math.round(a.alt_baro) : null;
+      const speed = a.gs ? Math.round(a.gs) : null;
+      const heading = a.track ? Math.round(a.track) : null;
 
-        const altText = altitude !== null ? `${altitude} m` : "N/A";
-        const velText = velocity !== null ? `${velocity} m/s` : "N/A";
-        const headText = heading !== null ? `${heading}°` : "N/A";
+      const marker = L.circleMarker([lat, lon], {
+        radius: 4,
+        color: "#00ffff",
+        fillColor: "#00ffff",
+        fillOpacity: 0.8
+      }).addTo(airTrafficMap);
 
-        marker.bindTooltip(
-          `${callsign}<br>Alt: ${altText}<br>Speed: ${velText}<br>Heading: ${headText}`,
-          { permanent: false, direction: "top" }
-        );
+      const altText = altitude !== null ? `${altitude} ft` : "N/A";
+      const spdText = speed !== null ? `${speed} kt` : "N/A";
+      const headText = heading !== null ? `${heading}°` : "N/A";
 
-        airTrafficMarkers.push(marker);
+      marker.bindTooltip(
+        `${callsign}<br>Alt: ${altText}<br>Speed: ${spdText}<br>Heading: ${headText}`,
+        { permanent: false, direction: "top" }
+      );
 
-        pushAirTraffic(
-          `Plane ${callsign} — Alt: ${altText}, Speed: ${velText}, Heading: ${headText}`
-        );
-      }
+      airTrafficMarkers.push(marker);
+
+      pushAirTraffic(
+        `Plane ${callsign} — Alt: ${altText}, Speed: ${spdText}, Heading: ${headText}`
+      );
     });
   } catch (err) {
     pushAirTraffic("Airspace scan failed — connection issue.");
