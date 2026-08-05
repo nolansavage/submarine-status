@@ -76,7 +76,7 @@
       SYSTEM STATUS
     </h1>
 
-    <!-- ⭐ Reddit Trending Panel (correct placement) -->
+    <!-- ⭐ Reddit Trending Panel -->
     <div class="panel reddit-panel">
       <h2>COMMUNICATIONS ARRAY — REDDIT TRENDS</h2>
       <ul id="reddit-trending"></ul>
@@ -84,11 +84,13 @@
 
   </div>
 
-  <!-- ⭐ Reddit JavaScript (must be at bottom of body) -->
+  <!-- ⭐ Reddit JavaScript -->
   <script>
     async function loadRedditTrending() {
       try {
-        const response = await fetch("https://www.reddit.com/r/all/top.json?limit=10");
+        const response = await fetch(
+          "https://corsproxy.io/?https://www.reddit.com/r/all/top.json?limit=10"
+        );
         const data = await response.json();
 
         const list = document.getElementById("reddit-trending");
@@ -115,11 +117,3 @@
 </body>
 </html>
 
-
-
-  
-<body class="min-h-screen crt">
-
-  <div class="max-w-3xl mx-auto py-12 px-6">
-    <h1 class="text-4xl font-bold mb-6 text-center tracking-widest">
-      SYSTEM STATUS
