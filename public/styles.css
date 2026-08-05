@@ -1,3 +1,7 @@
+/* ---------------------------------------------------
+   GLOBAL
+--------------------------------------------------- */
+
 body {
   background: #0a0f0f;
   color: #c8f7dc;
@@ -11,14 +15,20 @@ body {
   padding: 0 10px 20px;
 }
 
-/* Clustered rows */
+/* ---------------------------------------------------
+   ROW CLUSTERS
+--------------------------------------------------- */
+
 .row-cluster {
   display: flex;
   gap: 6px;
   margin-bottom: 8px;
 }
 
-/* Panels with size variants */
+/* ---------------------------------------------------
+   PANELS
+--------------------------------------------------- */
+
 .panel {
   border: 2px solid #00ffff;
   background: rgba(0, 20, 40, 0.8);
@@ -34,13 +44,16 @@ body {
   text-shadow: 0 0 5px #00ffff;
 }
 
-/* Size classes */
+/* Panel sizes */
 .panel.small { flex: 1; }
 .panel.medium { flex: 2; }
 .panel.large { flex: 3; }
 .panel.full { width: 100%; }
 
-/* Rows inside panels */
+/* ---------------------------------------------------
+   ROWS INSIDE PANELS
+--------------------------------------------------- */
+
 .row {
   display: flex;
   justify-content: space-between;
@@ -52,6 +65,7 @@ body {
   font-size: 12px;
 }
 
+/* Logs */
 .log {
   list-style: none;
   padding: 0;
@@ -66,7 +80,10 @@ body {
   padding: 2px 0;
 }
 
-/* CRT effect */
+/* ---------------------------------------------------
+   CRT EFFECT
+--------------------------------------------------- */
+
 .crt {
   position: relative;
 }
@@ -88,7 +105,10 @@ body {
   );
 }
 
-/* Sonar */
+/* ---------------------------------------------------
+   SONAR
+--------------------------------------------------- */
+
 .sonar-wrapper {
   position: relative;
   width: 120px;
@@ -125,7 +145,10 @@ body {
   to { transform: translateX(-50%) rotate(360deg); }
 }
 
-/* Terminal */
+/* ---------------------------------------------------
+   TERMINAL
+--------------------------------------------------- */
+
 .terminal-output {
   background: rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(0, 255, 255, 0.3);
@@ -163,7 +186,10 @@ body {
   box-shadow: 0 0 5px #00ffff;
 }
 
-/* Map */
+/* ---------------------------------------------------
+   MAP
+--------------------------------------------------- */
+
 #map {
   width: 100%;
   height: 220px;
@@ -175,7 +201,10 @@ body {
   background: #020608;
 }
 
-/* GPS button */
+/* ---------------------------------------------------
+   GPS BUTTON
+--------------------------------------------------- */
+
 .gps-btn {
   width: 100%;
   margin: 4px 0 6px;
@@ -200,7 +229,9 @@ body {
   background: #000;
 }
 
-/* ASTRONAUT MODULE */
+/* ---------------------------------------------------
+   STARFIELD BACKGROUND
+--------------------------------------------------- */
 
 #starfield {
   position: fixed;
@@ -212,6 +243,10 @@ body {
   opacity: 0.25;
   z-index: -3;
 }
+
+/* ---------------------------------------------------
+   ASTRONAUT
+--------------------------------------------------- */
 
 #astronaut {
   position: fixed;
@@ -264,7 +299,9 @@ body {
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
-/* CREW DECK */
+/* ---------------------------------------------------
+   CREW DECK
+--------------------------------------------------- */
 
 #crew-roster li {
   display: flex;
@@ -272,16 +309,16 @@ body {
   padding: 2px 0;
 }
 
-#crew-roster .crew-name {
+.crew-name {
   color: #7fffd4;
 }
 
-#crew-roster .crew-role {
+.crew-role {
   font-size: 11px;
   opacity: 0.8;
 }
 
-#crew-roster .crew-status {
+.crew-status {
   font-size: 11px;
   color: #00ffff;
 }
