@@ -144,9 +144,9 @@ function loadWeather() {
     "Calm skies, high visibility."
   ];
   const cond = conditions[Math.floor(Math.random() * conditions.length)];
-  const temp = (Math.random() * 15 - 5).toFixed(1); // -5 to +10
-  const wind = (Math.random() * 30).toFixed(0); // 0–30 km/h
-  const humidity = (60 + Math.random() * 30).toFixed(0); // 60–90%
+  const temp = (Math.random() * 15 - 5).toFixed(1);
+  const wind = (Math.random() * 30).toFixed(0);
+  const humidity = (60 + Math.random() * 30).toFixed(0);
 
   document.getElementById("weather-condition").textContent = cond;
   document.getElementById("weather-temp").textContent = `${temp} °C`;
@@ -174,7 +174,7 @@ function loadRedditPlaceholder() {
   });
 }
 
-// Engine status (simple flavor)
+// Engine status
 function randomEngineStatus() {
   const heatStates = ["NORMAL", "ELEVATED", "HIGH", "CRITICAL"];
   const thrustStates = ["STABLE", "INCREASING", "DECREASING"];
@@ -184,7 +184,7 @@ function randomEngineStatus() {
     thrustStates[Math.floor(Math.random() * thrustStates.length)];
 }
 
-// GPS Map (Leaflet)
+// GPS Map
 let map;
 let gpsMarker;
 
@@ -199,9 +199,7 @@ function initMap(lat, lon) {
     map.setView([lat, lon], 13);
   }
 
-  if (gpsMarker) {
-    gpsMarker.remove();
-  }
+  if (gpsMarker) gpsMarker.remove();
 
   gpsMarker = L.circleMarker([lat, lon], {
     radius: 6,
@@ -212,7 +210,6 @@ function initMap(lat, lon) {
 }
 
 function setupGPSMapInitial() {
-  // Initial map: Oshawa fallback
   initMap(43.8971, -78.8658);
   document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
 }
@@ -248,7 +245,8 @@ const crew = [
   { name: "Nolan", role: "Commander", status: "FOCUSED" },
   { name: "Mira", role: "Navigator", status: "PLOTTING COURSE" },
   { name: "Jax", role: "Engineer", status: "TUNING REACTOR" },
-  { name: "Sol", role: "Comms", status: "LISTENING IN" }
+  { name: "Sol", role: "Comms", status: "LISTENING IN" },
+  { name: "Pip", role: "AI Assistant", status: "ONLINE" }
 ];
 
 function renderCrewRoster() {
@@ -285,6 +283,44 @@ function pushCrewLog(text) {
   line.textContent = `[${ts}] ${text}`;
   log.appendChild(line);
   log.scrollTop = log.scrollHeight;
+}
+
+// Crew chatter
+const crewChatter = {
+  Nolan: [
+    "All systems holding steady.",
+    "Crew morale looks good.",
+    "Let’s keep this mission clean."
+  ],
+  Mira: [
+    "Course plotted. No anomalies.",
+    "Stars look calm tonight.",
+    "Navigation grid is stable."
+  ],
+  Jax: [
+    "Reactor hum is perfect.",
+    "I tightened the plasma coupler again.",
+    "If something explodes, it wasn’t me."
+  ],
+  Sol: [
+    "Comms are quiet… too quiet.",
+    "Picking up faint signals.",
+    "I swear I heard whispering in the static."
+  ],
+  Pip: [
+    "Hello Nolan! Pip online!",
+    "I am monitoring all systems!",
+    "I detected a 0.00001% anomaly. Probably nothing!",
+    "Beep boop! Crew status nominal!"
+  ]
+};
+
+function randomCrewMessage() {
+  const names = Object.keys(crewChatter);
+  const speaker = names[Math.floor(Math.random() * names.length)];
+  const lines = crewChatter[speaker];
+  const line = lines[Math.floor(Math.random() * lines.length)];
+  pushCrewLog(`${speaker}: ${line}`);
 }
 
 // Astronaut speech
@@ -340,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Crew deck wiring
+  // Crew deck
   renderCrewRoster();
   const crewInput = document.getElementById("crew-chat-input");
   if (crewInput) {
@@ -352,10 +388,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Crew chatter every 30 seconds
+  setInterval(randomCrewMessage, 30000);
+
   // Astronaut chatter
-  pushCrewLog("Crew deck online. All hands accounted for.");
   setInterval(showAstronautBubble, 25000);
 
+  pushCrewLog("Crew deck online. All hands accounted for.");
   pushTerminal("Submarine command console online.");
   pushTerminal("Type 'help' for available commands.");
 });
