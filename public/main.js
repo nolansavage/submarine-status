@@ -1,23 +1,276 @@
-/* ---------------- ASTRONAUT MODULE ---------------- */
+// Clock + uptime
+let startTime = Date.now();
 
-const astroLines = [
-  "Space is cold. Send snacks.",
-  "Nolan, I drift therefore I am.",
-  "Zero gravity? More like zero motivation.",
-  "I saw a space whale once. It winked.",
-  "This flag is heavy emotionally.",
-  "I’m not lost. I’m exploring.",
-];
-
-function showAstronautBubble() {
-  const bubble = document.getElementById("astro-bubble");
-  const line = astroLines[Math.floor(Math.random() * astroLines.length)];
-  bubble.textContent = line;
-  bubble.style.opacity = 1;
-  setTimeout(() => {
-    bubble.style.opacity = 0;
-  }, 5000);
+function pad(n) {
+  return n < 10 ? "0" + n : "" + n;
 }
 
-setInterval(showAstronautBubble, 25000);
+function updateClock() {
+  const now = new Date();
+  const h = pad(now.getHours());
+  const m = pad(now.getMinutes());
+  const s = pad(now.getSeconds());
+  document.getElementById("clock").textContent = `${h}:${m}:${s}`;
+}
 
+function updateUptime() {
+  const diff = Date.now() - startTime;
+  const totalSeconds = Math.floor(diff / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  document.getElementById("uptime").textContent =
+    `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+}
+
+// Diagnostics
+function populateDiagnostics() {
+  const nav = navigator;
+  document.getElementById("os").textContent = nav.userAgent;
+
+  document.getElementById("browser").textContent = nav.userAgentData
+    ? nav.userAgentData.brands.map(b => b.brand).join(", ")
+    : "Unknown";
+
+  document.getElementById("cores").textContent =
+    nav.hardwareConcurrency || "N/A";
+
+  if (nav.deviceMemory) {
+    document.getElementById("memory").textContent = nav.deviceMemory.toFixed(1);
+  } else {
+    document.getElementById("memory").textContent = "N/A";
+  }
+
+  document.getElementById("screen").textContent =
+    `${window.screen.width} x ${window.screen.height}`;
+
+  if (nav.getBattery) {
+    nav.getBattery().then(battery => {
+      const pct = Math.round(battery.level * 100);
+      const status = battery.charging ? "CHARGING" : "DISCHARGING";
+      document.getElementById("battery").textContent = `${pct}% (${status})`;
+    }).catch(() => {
+      document.getElementById("battery").textContent = "N/A";
+    });
+  } else {
+    document.getElementById("battery").textContent = "N/A";
+  }
+}
+
+// Alerts
+const alertMessages = [
+  "Hull integrity nominal.",
+  "Pressure stable across all compartments.",
+  "Sonar sweep complete. No hostiles detected.",
+  "Thermal vents detected off port side.",
+  "Navigation buoy acquired.",
+  "Communications link stable.",
+  "Ballast tanks balanced.",
+  "Engine output within safe parameters.",
+  "External temperature within expected range.",
+  "Radiation levels nominal."
+];
+
+function pushAlert(msg) {
+  const log = document.getElementById("alerts-log");
+  const li = document.createElement("li");
+  const ts = new Date().toLocaleTimeString();
+  li.textContent = `[${ts}] ${msg}`;
+  log.insertBefore(li, log.firstChild);
+  while (log.children.length > 12) {
+    log.removeChild(log.lastChild);
+  }
+}
+
+function startAlerts() {
+  pushAlert("System startup complete. All stations nominal.");
+  setInterval(() => {
+    const msg = alertMessages[Math.floor(Math.random() * alertMessages.length)];
+    pushAlert(msg);
+  }, 7000);
+}
+
+// Terminal
+function pushTerminal(text) {
+  const out = document.getElementById("terminal-output");
+  const line = document.createElement("div");
+  line.textContent = text;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+}
+
+function handleCommand(cmd) {
+  const c = cmd.trim().toLowerCase();
+  if (!c) return;
+
+  pushTerminal("> " + cmd);
+
+  switch (c) {
+    case "help":
+      pushTerminal("Commands: status, diagnostics, sonar, map, gps, clear, help");
+      break;
+    case "status":
+      pushTerminal("All systems nominal. Mission time increasing.");
+      break;
+    case "diagnostics":
+      pushTerminal("Diagnostics panel shows current system status.");
+      break;
+    case "sonar":
+      pushTerminal("Sonar sweep active. No anomalies detected.");
+      break;
+    case "map":
+      pushTerminal("Tactical map tracking current position or Oshawa fallback.");
+      break;
+    case "gps":
+      pushTerminal("Attempting GPS lock via navigation control...");
+      forceGPSLock();
+      break;
+    case "clear":
+      document.getElementById("terminal-output").innerHTML = "";
+      break;
+    default:
+      pushTerminal("Unknown command. Type 'help' for list.");
+  }
+}
+
+// Weather (mocked for Oshawa)
+function loadWeather() {
+  const conditions = [
+    "Overcast with lake-effect clouds.",
+    "Cold, clear night over Oshawa.",
+    "Rain showers moving in from the west.",
+    "Fog rolling in over the shoreline.",
+    "Windy with scattered clouds.",
+    "Calm skies, high visibility."
+  ];
+  const cond = conditions[Math.floor(Math.random() * conditions.length)];
+  const temp = (Math.random() * 15 - 5).toFixed(1); // -5 to +10
+  const wind = (Math.random() * 30).toFixed(0); // 0–30 km/h
+  const humidity = (60 + Math.random() * 30).toFixed(0); // 60–90%
+
+  document.getElementById("weather-condition").textContent = cond;
+  document.getElementById("weather-temp").textContent = `${temp} °C`;
+  document.getElementById("weather-wind").textContent = `${wind} km/h`;
+  document.getElementById("weather-humidity").textContent = `${humidity}%`;
+}
+
+// Reddit placeholder
+function loadRedditPlaceholder() {
+  const list = document.getElementById("reddit-trending");
+  list.innerHTML = "";
+
+  const items = [
+    "r/AskReddit — \"What’s a subtle sign someone is not okay?\"",
+    "r/technology — \"New GPU architecture shakes up the market.\"",
+    "r/gaming — \"Underrated indie games you should try.\"",
+    "r/canada — \"Lake-effect weather stories from Ontario.\"",
+    "r/programming — \"Show off your side projects.\""
+  ];
+
+  items.forEach(text => {
+    const li = document.createElement("li");
+    li.textContent = text;
+    list.appendChild(li);
+  });
+}
+
+// Engine status (simple flavor)
+function randomEngineStatus() {
+  const heatStates = ["NORMAL", "ELEVATED", "HIGH", "CRITICAL"];
+  const thrustStates = ["STABLE", "INCREASING", "DECREASING"];
+  document.getElementById("engine-heat").textContent =
+    heatStates[Math.floor(Math.random() * heatStates.length)];
+  document.getElementById("engine-thrust").textContent =
+    thrustStates[Math.floor(Math.random() * thrustStates.length)];
+}
+
+// GPS Map (Leaflet)
+let map;
+let gpsMarker;
+
+function initMap(lat, lon) {
+  if (!map) {
+    map = L.map("map").setView([lat, lon], 13);
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 19 }
+    ).addTo(map);
+  } else {
+    map.setView([lat, lon], 13);
+  }
+
+  if (gpsMarker) {
+    gpsMarker.remove();
+  }
+
+  gpsMarker = L.circleMarker([lat, lon], {
+    radius: 6,
+    color: "#00ffff",
+    fillColor: "#00ffff",
+    fillOpacity: 0.8
+  }).addTo(map);
+}
+
+function setupGPSMapInitial() {
+  // Initial map: Oshawa fallback
+  initMap(43.8971, -78.8658);
+  document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
+}
+
+function forceGPSLock() {
+  if (!navigator.geolocation) {
+    pushTerminal("GPS not available on this device.");
+    document.getElementById("engine-nav").textContent = "OFFLINE";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      initMap(latitude, longitude);
+      const fixText = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+      document.getElementById("gps-last-fix").textContent = fixText;
+      document.getElementById("engine-nav").textContent = "LOCKED";
+      pushTerminal(`GPS lock acquired: ${fixText}.`);
+    },
+    (err) => {
+      pushTerminal("GPS denied or unavailable. Holding position over Oshawa.");
+      document.getElementById("engine-nav").textContent = "OFFLINE";
+      document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
+      initMap(43.8971, -78.8658);
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+  updateClock();
+  updateUptime();
+  setInterval(updateClock, 1000);
+  setInterval(updateUptime, 1000);
+
+  populateDiagnostics();
+  startAlerts();
+  loadWeather();
+  loadRedditPlaceholder();
+  randomEngineStatus();
+  setupGPSMapInitial();
+
+  const input = document.getElementById("terminal-input");
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      handleCommand(input.value);
+      input.value = "";
+    }
+  });
+
+  const gpsBtn = document.getElementById("gps-lock-btn");
+  gpsBtn.addEventListener("click", () => {
+    pushTerminal("Navigation control: attempting GPS lock...");
+    forceGPSLock();
+  });
+
+  pushTerminal("Submarine command console online.");
+  pushTerminal("Type 'help' for available commands.");
+});
