@@ -1,72 +1,53 @@
 // Clock + uptime
 let startTime = Date.now();
 
-function pad(n) {
-  return n < 10 ? "0" + n : "" + n;
-}
+function pad(n) { return n < 10 ? "0" + n : "" + n; }
 
 function updateClock() {
   const now = new Date();
-  const h = pad(now.getHours());
-  const m = pad(now.getMinutes());
-  const s = pad(now.getSeconds());
   const clockEl = document.getElementById("clock");
-  if (clockEl) clockEl.textContent = `${h}:${m}:${s}`;
+  if (clockEl)
+    clockEl.textContent =
+      `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 }
 
 function updateUptime() {
   const diff = Date.now() - startTime;
-  const totalSeconds = Math.floor(diff / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  const uptimeEl = document.getElementById("uptime");
-  if (uptimeEl) uptimeEl.textContent =
-    `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+  const total = Math.floor(diff / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const upEl = document.getElementById("uptime");
+  if (upEl) upEl.textContent = `${pad(h)}h ${pad(m)}m ${pad(s)}s`;
 }
 
 // Diagnostics
 function populateDiagnostics() {
   const nav = navigator;
-
   const osEl = document.getElementById("os");
-  if (osEl) osEl.textContent = nav.userAgent;
+  const brEl = document.getElementById("browser");
+  const coresEl = document.getElementById("cores");
+  const memEl = document.getElementById("memory");
+  const scrEl = document.getElementById("screen");
+  const batEl = document.getElementById("battery");
 
-  const browserEl = document.getElementById("browser");
-  if (browserEl) {
-    browserEl.textContent = nav.userAgentData
+  if (osEl) osEl.textContent = nav.userAgent;
+  if (brEl) {
+    brEl.textContent = nav.userAgentData
       ? nav.userAgentData.brands.map(b => b.brand).join(", ")
       : "Unknown";
   }
-
-  const coresEl = document.getElementById("cores");
   if (coresEl) coresEl.textContent = nav.hardwareConcurrency || "N/A";
+  if (memEl) memEl.textContent =
+    nav.deviceMemory ? nav.deviceMemory.toFixed(1) : "N/A";
+  if (scrEl) scrEl.textContent =
+    `${window.screen.width} x ${window.screen.height}`;
 
-  const memEl = document.getElementById("memory");
-  if (memEl) {
-    if (nav.deviceMemory) {
-      memEl.textContent = nav.deviceMemory.toFixed(1);
-    } else {
-      memEl.textContent = "N/A";
-    }
-  }
-
-  const screenEl = document.getElementById("screen");
-  if (screenEl) {
-    screenEl.textContent = `${window.screen.width} x ${window.screen.height}`;
-  }
-
-  const batteryEl = document.getElementById("battery");
-  if (nav.getBattery && batteryEl) {
-    nav.getBattery().then(battery => {
-      const pct = Math.round(battery.level * 100);
-      const status = battery.charging ? "CHARGING" : "DISCHARGING";
-      batteryEl.textContent = `${pct}% (${status})`;
-    }).catch(() => {
-      batteryEl.textContent = "N/A";
-    });
-  } else if (batteryEl) {
-    batteryEl.textContent = "N/A";
+  if (nav.getBattery && batEl) {
+    nav.getBattery().then(b => {
+      batEl.textContent =
+        `${Math.round(b.level * 100)}% (${b.charging ? "CHARGING" : "DISCHARGING"})`;
+    }).catch(() => batEl.textContent = "N/A");
   }
 }
 
@@ -88,19 +69,15 @@ function pushAlert(msg) {
   const log = document.getElementById("alerts-log");
   if (!log) return;
   const li = document.createElement("li");
-  const ts = new Date().toLocaleTimeString();
-  li.textContent = `[${ts}] ${msg}`;
+  li.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
   log.insertBefore(li, log.firstChild);
-  while (log.children.length > 12) {
-    log.removeChild(log.lastChild);
-  }
+  while (log.children.length > 12) log.removeChild(log.lastChild);
 }
 
 function startAlerts() {
   pushAlert("System startup complete. All stations nominal.");
   setInterval(() => {
-    const msg = alertMessages[Math.floor(Math.random() * alertMessages.length)];
-    pushAlert(msg);
+    pushAlert(alertMessages[Math.floor(Math.random() * alertMessages.length)]);
   }, 7000);
 }
 
@@ -117,7 +94,6 @@ function pushTerminal(text) {
 function handleCommand(cmd) {
   const c = cmd.trim().toLowerCase();
   if (!c) return;
-
   pushTerminal("> " + cmd);
 
   switch (c) {
@@ -149,7 +125,7 @@ function handleCommand(cmd) {
   }
 }
 
-// Weather (mocked for Oshawa)
+// Weather
 function loadWeather() {
   const conditions = [
     "Overcast with lake-effect clouds.",
@@ -159,20 +135,19 @@ function loadWeather() {
     "Windy with scattered clouds.",
     "Calm skies, high visibility."
   ];
-  const cond = conditions[Math.floor(Math.random() * conditions.length)];
-  const temp = (Math.random() * 15 - 5).toFixed(1);
-  const wind = (Math.random() * 30).toFixed(0);
-  const humidity = (60 + Math.random() * 30).toFixed(0);
-
   const condEl = document.getElementById("weather-condition");
   const tempEl = document.getElementById("weather-temp");
   const windEl = document.getElementById("weather-wind");
   const humEl = document.getElementById("weather-humidity");
 
-  if (condEl) condEl.textContent = cond;
-  if (tempEl) tempEl.textContent = `${temp} °C`;
-  if (windEl) windEl.textContent = `${wind} km/h`;
-  if (humEl) humEl.textContent = `${humidity}%`;
+  if (condEl)
+    condEl.textContent = conditions[Math.floor(Math.random() * conditions.length)];
+  if (tempEl)
+    tempEl.textContent = `${(Math.random() * 15 - 5).toFixed(1)} °C`;
+  if (windEl)
+    windEl.textContent = `${(Math.random() * 30).toFixed(0)} km/h`;
+  if (humEl)
+    humEl.textContent = `${(60 + Math.random() * 30).toFixed(0)}%`;
 }
 
 // Reddit placeholder
@@ -180,16 +155,13 @@ function loadRedditPlaceholder() {
   const list = document.getElementById("reddit-trending");
   if (!list) return;
   list.innerHTML = "";
-
-  const items = [
+  [
     "r/AskReddit — \"What’s a subtle sign someone is not okay?\"",
     "r/technology — \"New GPU architecture shakes up the market.\"",
     "r/gaming — \"Underrated indie games you should try.\"",
     "r/canada — \"Lake-effect weather stories from Ontario.\"",
     "r/programming — \"Show off your side projects.\""
-  ];
-
-  items.forEach(text => {
+  ].forEach(text => {
     const li = document.createElement("li");
     li.textContent = text;
     list.appendChild(li);
@@ -200,21 +172,15 @@ function loadRedditPlaceholder() {
 function randomEngineStatus() {
   const heatStates = ["NORMAL", "ELEVATED", "HIGH", "CRITICAL"];
   const thrustStates = ["STABLE", "INCREASING", "DECREASING"];
-
   const heatEl = document.getElementById("engine-heat");
   const thrustEl = document.getElementById("engine-thrust");
-
-  if (heatEl) {
-    heatEl.textContent =
-      heatStates[Math.floor(Math.random() * heatStates.length)];
-  }
-  if (thrustEl) {
-    thrustEl.textContent =
-      thrustStates[Math.floor(Math.random() * thrustStates.length)];
-  }
+  if (heatEl)
+    heatEl.textContent = heatStates[Math.floor(Math.random() * heatStates.length)];
+  if (thrustEl)
+    thrustEl.textContent = thrustStates[Math.floor(Math.random() * thrustStates.length)];
 }
 
-// GPS Map
+// GPS map
 let map;
 let gpsMarker;
 
@@ -230,7 +196,6 @@ function initMap(lat, lon) {
   }
 
   if (gpsMarker) gpsMarker.remove();
-
   gpsMarker = L.circleMarker([lat, lon], {
     radius: 6,
     color: "#00ffff",
@@ -289,22 +254,10 @@ function renderCrewRoster() {
   roster.innerHTML = "";
   crew.forEach(member => {
     const li = document.createElement("li");
-
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "crew-name";
-    nameSpan.textContent = member.name;
-
-    const roleSpan = document.createElement("span");
-    roleSpan.className = "crew-role";
-    roleSpan.textContent = member.role;
-
-    const statusSpan = document.createElement("span");
-    statusSpan.className = "crew-status";
-    statusSpan.textContent = member.status;
-
-    li.appendChild(nameSpan);
-    li.appendChild(roleSpan);
-    li.appendChild(statusSpan);
+    li.innerHTML =
+      `<span class="crew-name">${member.name}</span>
+       <span class="crew-role">${member.role}</span>
+       <span class="crew-status">${member.status}</span>`;
     roster.appendChild(li);
   });
 }
@@ -313,8 +266,7 @@ function pushCrewLog(text) {
   const log = document.getElementById("crew-log");
   if (!log) return;
   const line = document.createElement("div");
-  const ts = new Date().toLocaleTimeString();
-  line.textContent = `[${ts}] ${text}`;
+  line.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
   log.appendChild(line);
   log.scrollTop = log.scrollHeight;
 }
@@ -373,9 +325,7 @@ function showAstronautBubble() {
   const line = astroLines[Math.floor(Math.random() * astroLines.length)];
   bubble.textContent = line;
   bubble.style.opacity = 1;
-  setTimeout(() => {
-    bubble.style.opacity = 0;
-  }, 5000);
+  setTimeout(() => bubble.style.opacity = 0, 5000);
 }
 
 // Deep space navigation
@@ -396,12 +346,9 @@ function pushAsteroidPing(msg) {
   const log = document.getElementById("asteroid-radar-log");
   if (!log) return;
   const li = document.createElement("li");
-  const ts = new Date().toLocaleTimeString();
-  li.textContent = `[${ts}] ${msg}`;
+  li.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
   log.insertBefore(li, log.firstChild);
-  while (log.children.length > 10) {
-    log.removeChild(log.lastChild);
-  }
+  while (log.children.length > 10) log.removeChild(log.lastChild);
 }
 
 function updateAsteroidRadar() {
@@ -424,13 +371,12 @@ function updateGalaxyMap() {
   const sectorEl = document.getElementById("galaxy-sector");
   const statusEl = document.getElementById("galaxy-status");
   if (!sectorEl || !statusEl) return;
-
   const pick = galaxySectors[Math.floor(Math.random() * galaxySectors.length)];
   sectorEl.textContent = pick.sector;
   statusEl.textContent = pick.status;
 }
 
-// Aerial Traffic Monitor — ADS-B Exchange, Southern Ontario
+// Aerial Traffic Monitor (placeholder / non-breaking)
 let airTrafficMap;
 let airTrafficMarkers = [];
 
@@ -455,89 +401,99 @@ function clearAirTrafficMarkers() {
 function pushAirTraffic(msg) {
   const log = document.getElementById("air-traffic-log");
   if (!log) return;
-
   const li = document.createElement("li");
-  const ts = new Date().toLocaleTimeString();
-  li.textContent = `[${ts}] ${msg}`;
-
+  li.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
   log.insertBefore(li, log.firstChild);
-
-  while (log.children.length > 15) {
-    log.removeChild(log.lastChild);
-  }
+  while (log.children.length > 15) log.removeChild(log.lastChild);
 }
 
 async function updateAirTraffic() {
   initAirTrafficMap();
+  // To avoid breaking if external APIs fail, we just log a placeholder:
+  pushAirTraffic("Airspace scan placeholder — module online, data source pending.");
+}
+
+// Earthquake Monitor — USGS live feed + map
+let quakeMap;
+let quakeMarkers = [];
+
+function initQuakeMap() {
+  const mapDiv = document.getElementById("quake-map");
+  if (!mapDiv) return;
+
+  if (!quakeMap) {
+    quakeMap = L.map("quake-map").setView([20, 0], 2);
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 8 }
+    ).addTo(quakeMap);
+  }
+}
+
+function clearQuakeMarkers() {
+  quakeMarkers.forEach(m => m.remove());
+  quakeMarkers = [];
+}
+
+function pushQuake(msg) {
+  const log = document.getElementById("quake-log");
+  if (!log) return;
+  const li = document.createElement("li");
+  li.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  log.insertBefore(li, log.firstChild);
+  while (log.children.length > 20) log.removeChild(log.lastChild);
+}
+
+async function updateEarthquakes() {
+  initQuakeMap();
 
   try {
-    // ADS-B Exchange JSON feed
-    const url = "https://adsbexchange.com/api/aircraft/json/";
+    const url =
+      "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson";
     const res = await fetch(url);
     const data = await res.json();
 
-    if (!data.aircraft || data.aircraft.length === 0) {
-      pushAirTraffic("No aircraft detected in regional airspace.");
-      clearAirTrafficMarkers();
+    if (!data.features || data.features.length === 0) {
+      pushQuake("No seismic activity detected in the last hour.");
+      clearQuakeMarkers();
       return;
     }
 
-    // Southern Ontario bounding box
-    const minLat = 42.5;
-    const maxLat = 45.0;
-    const minLon = -81.0;
-    const maxLon = -76.0;
+    clearQuakeMarkers();
 
-    const regional = data.aircraft.filter(a => {
-      return (
-        typeof a.lat === "number" &&
-        typeof a.lon === "number" &&
-        a.lat >= minLat &&
-        a.lat <= maxLat &&
-        a.lon >= minLon &&
-        a.lon <= maxLon
-      );
-    });
+    data.features.slice(0, 15).forEach(feature => {
+      const props = feature.properties;
+      const coords = feature.geometry.coordinates; // [lon, lat, depth]
+      const mag = props.mag != null ? props.mag.toFixed(1) : "N/A";
+      const place = props.place || "Unknown location";
+      const depth = coords[2] != null ? coords[2].toFixed(1) : "N/A";
+      const lat = coords[1];
+      const lon = coords[0];
 
-    clearAirTrafficMarkers();
-
-    if (regional.length === 0) {
-      pushAirTraffic("No aircraft currently over Southern Ontario.");
-      return;
-    }
-
-    regional.slice(0, 15).forEach(a => {
-      const callsign = a.flight || "UNKNOWN";
-      const lat = a.lat;
-      const lon = a.lon;
-      const altitude = a.alt_baro ? Math.round(a.alt_baro) : null;
-      const speed = a.gs ? Math.round(a.gs) : null;
-      const heading = a.track ? Math.round(a.track) : null;
+      let level = "GREEN";
+      if (props.mag >= 4) level = "YELLOW";
+      if (props.mag >= 6) level = "RED";
 
       const marker = L.circleMarker([lat, lon], {
         radius: 4,
-        color: "#00ffff",
-        fillColor: "#00ffff",
+        color: level === "RED" ? "#ff0044" :
+               level === "YELLOW" ? "#ffcc00" : "#00ff88",
+        fillColor: level === "RED" ? "#ff0044" :
+                   level === "YELLOW" ? "#ffcc00" : "#00ff88",
         fillOpacity: 0.8
-      }).addTo(airTrafficMap);
-
-      const altText = altitude !== null ? `${altitude} ft` : "N/A";
-      const spdText = speed !== null ? `${speed} kt` : "N/A";
-      const headText = heading !== null ? `${heading}°` : "N/A";
+      }).addTo(quakeMap);
 
       marker.bindTooltip(
-        `${callsign}<br>Alt: ${altText}<br>Speed: ${spdText}<br>Heading: ${headText}`,
+        `M${mag} — ${place}<br>Depth: ${depth} km<br>Level: ${level}`,
         { permanent: false, direction: "top" }
       );
 
-      airTrafficMarkers.push(marker);
+      quakeMarkers.push(marker);
 
-      pushAirTraffic(
-        `Plane ${callsign} — Alt: ${altText}, Speed: ${spdText}, Heading: ${headText}`
-      );
+      pushQuake(`M${mag} — ${place} — Depth ${depth} km — Level ${level}`);
     });
   } catch (err) {
-    pushAirTraffic("Airspace scan failed — connection issue.");
+    pushQuake("Seismic scan failed — connection issue.");
   }
 }
 
@@ -573,7 +529,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Crew deck
   renderCrewRoster();
   const crewInput = document.getElementById("crew-chat-input");
   if (crewInput) {
@@ -585,23 +540,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Crew chatter
   setInterval(randomCrewMessage, 30000);
-
-  // Astronaut chatter
   setInterval(showAstronautBubble, 25000);
 
-  // Deep space navigation
   updateStarTracker();
   updateGalaxyMap();
   setInterval(updateStarTracker, 20000);
   setInterval(updateAsteroidRadar, 25000);
   setInterval(updateGalaxyMap, 30000);
 
-  // Aerial Traffic Monitor
   initAirTrafficMap();
   updateAirTraffic();
   setInterval(updateAirTraffic, 20000);
+
+  initQuakeMap();
+  updateEarthquakes();
+  setInterval(updateEarthquakes, 30000);
 
   pushCrewLog("Crew deck online. All hands accounted for.");
   pushTerminal("Submarine command console online.");
