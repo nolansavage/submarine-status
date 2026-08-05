@@ -27,6 +27,7 @@ function updateUptime() {
 function populateDiagnostics() {
   const nav = navigator;
   document.getElementById("os").textContent = nav.userAgent;
+
   document.getElementById("browser").textContent = nav.userAgentData
     ? nav.userAgentData.brands.map(b => b.brand).join(", ")
     : "Unknown";
@@ -106,16 +107,19 @@ function handleCommand(cmd) {
 
   switch (c) {
     case "help":
-      pushTerminal("Available commands: status, diagnostics, sonar, help, clear");
+      pushTerminal("Commands: status, diagnostics, sonar, clear, map, help");
       break;
     case "status":
       pushTerminal("All systems nominal. Mission time increasing.");
       break;
     case "diagnostics":
-      pushTerminal("Diagnostics: OS, browser, cores, memory, battery, screen updated in panel.");
+      pushTerminal("Diagnostics panel shows current system status.");
       break;
     case "sonar":
       pushTerminal("Sonar sweep active. No anomalies detected.");
+      break;
+    case "map":
+      pushTerminal("Tactical map tracking current position.");
       break;
     case "clear":
       document.getElementById("terminal-output").innerHTML = "";
@@ -125,12 +129,10 @@ function handleCommand(cmd) {
   }
 }
 
-// Weather (mocked for Oshawa so it always works)
+// Weather (mocked for Oshawa)
 function loadWeather() {
-  // Simple fake data so it never breaks on CORS
   const conditions = [
     "Overcast with lake-effect clouds.",
-    "Light snow flurries over the harbour.",
     "Cold, clear night over Oshawa.",
     "Rain showers moving in from the west.",
     "Fog rolling in over the shoreline.",
@@ -168,6 +170,60 @@ function loadRedditPlaceholder() {
   });
 }
 
+// Engine status (simple flavor)
+function randomEngineStatus() {
+  const heatStates = ["NORMAL", "ELEVATED", "HIGH", "CRITICAL"];
+  const thrustStates = ["STABLE", "INCREASING", "DECREASING"];
+  document.getElementById("engine-heat").textContent =
+    heatStates[Math.floor(Math.random() * heatStates.length)];
+  document.getElementById("engine-thrust").textContent =
+    thrustStates[Math.floor(Math.random() * thrustStates.length)];
+}
+
+// GPS Map (Leaflet)
+let map;
+
+function initMap(lat, lon) {
+  if (!map) {
+    map = L.map("map").setView([lat, lon], 13);
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 19 }
+    ).addTo(map);
+  } else {
+    map.setView([lat, lon], 13);
+  }
+
+  L.circleMarker([lat, lon], {
+    radius: 6,
+    color: "#00ffff",
+    fillColor: "#00ffff",
+    fillOpacity: 0.8
+  }).addTo(map);
+}
+
+function setupGPSMap() {
+  if (!navigator.geolocation) {
+    // fallback to Oshawa
+    initMap(43.8971, -78.8658);
+    pushTerminal("GPS not available. Centering map on Oshawa.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      initMap(latitude, longitude);
+      pushTerminal(`GPS lock acquired: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}.`);
+    },
+    () => {
+      initMap(43.8971, -78.8658);
+      pushTerminal("GPS denied. Centering map on Oshawa.");
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+
 // Init
 document.addEventListener("DOMContentLoaded", () => {
   updateClock();
@@ -179,6 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
   startAlerts();
   loadWeather();
   loadRedditPlaceholder();
+  randomEngineStatus();
+  setupGPSMap();
 
   const input = document.getElementById("terminal-input");
   input.addEventListener("keydown", (e) => {
