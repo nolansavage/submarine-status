@@ -17,7 +17,7 @@
     crossorigin=""
   />
 
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body class="crt">
 
@@ -68,12 +68,12 @@
         <div id="terminal-output" class="terminal-output"></div>
         <div class="terminal-input-row">
           <span class="prompt">></span>
-          <input id="terminal-input" type="text" placeholder="status, diagnostics, sonar, help" />
+          <input id="terminal-input" type="text" placeholder="status, diagnostics, sonar, map, help" />
         </div>
       </div>
     </div>
 
-    <!-- ROW 3: Weather (small) + Reddit (medium) + Extra (small) -->
+    <!-- ROW 3: Weather (small) + Reddit (medium) + Engine (small) -->
     <div class="row-cluster">
       <div class="panel small">
         <h2>WEATHER — OSHAWA</h2>
@@ -93,11 +93,21 @@
         <div class="row"><span class="label">REACTOR:</span><span id="engine-reactor">ONLINE</span></div>
         <div class="row"><span class="label">THRUST:</span><span id="engine-thrust">STABLE</span></div>
         <div class="row"><span class="label">HEAT:</span><span id="engine-heat">NORMAL</span></div>
+        <div class="row"><span class="label">NAVIGATION:</span><span id="engine-nav">OFFLINE</span></div>
       </div>
     </div>
 
-    <!-- ROW 4: FULL-WIDTH GPS MAP -->
+    <!-- ROW 4: GPS CONTROL + FULL-WIDTH MAP -->
     <div class="row-cluster">
+      <div class="panel small">
+        <h2>NAVIGATION CONTROL</h2>
+        <button id="gps-lock-btn" class="gps-btn">ACQUIRE GPS LOCK</button>
+        <div class="row">
+          <span class="label">LAST FIX:</span>
+          <span id="gps-last-fix">NONE</span>
+        </div>
+      </div>
+
       <div class="panel full">
         <h2>TACTICAL MAP — LIVE POSITION</h2>
         <div id="map"></div>
@@ -113,6 +123,6 @@
     crossorigin=""
   ></script>
 
-  <script src="main.js?v=2"></script>
+  <script src="main.js?v=3"></script>
 </body>
 </html>
