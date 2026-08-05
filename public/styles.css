@@ -1,7 +1,4 @@
-/* ---------------------------------------------------
-   GLOBAL
---------------------------------------------------- */
-
+/* GLOBAL */
 body {
   background: #0a0f0f;
   color: #c8f7dc;
@@ -15,20 +12,14 @@ body {
   padding: 0 10px 20px;
 }
 
-/* ---------------------------------------------------
-   ROW CLUSTERS
---------------------------------------------------- */
-
+/* ROWS */
 .row-cluster {
   display: flex;
   gap: 6px;
   margin-bottom: 8px;
 }
 
-/* ---------------------------------------------------
-   PANELS
---------------------------------------------------- */
-
+/* PANELS */
 .panel {
   border: 2px solid #00ffff;
   background: rgba(0, 20, 40, 0.8);
@@ -44,16 +35,12 @@ body {
   text-shadow: 0 0 5px #00ffff;
 }
 
-/* Panel sizes */
 .panel.small { flex: 1; }
 .panel.medium { flex: 2; }
 .panel.large { flex: 3; }
 .panel.full { width: 100%; }
 
-/* ---------------------------------------------------
-   ROWS INSIDE PANELS
---------------------------------------------------- */
-
+/* ROWS INSIDE PANELS */
 .row {
   display: flex;
   justify-content: space-between;
@@ -65,7 +52,7 @@ body {
   font-size: 12px;
 }
 
-/* Logs */
+/* LOGS */
 .log {
   list-style: none;
   padding: 0;
@@ -80,10 +67,7 @@ body {
   padding: 2px 0;
 }
 
-/* ---------------------------------------------------
-   CRT EFFECT
---------------------------------------------------- */
-
+/* CRT EFFECT */
 .crt {
   position: relative;
 }
@@ -105,10 +89,7 @@ body {
   );
 }
 
-/* ---------------------------------------------------
-   SONAR
---------------------------------------------------- */
-
+/* SONAR */
 .sonar-wrapper {
   position: relative;
   width: 120px;
@@ -145,10 +126,7 @@ body {
   to { transform: translateX(-50%) rotate(360deg); }
 }
 
-/* ---------------------------------------------------
-   TERMINAL
---------------------------------------------------- */
-
+/* TERMINAL */
 .terminal-output {
   background: rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(0, 255, 255, 0.3);
@@ -186,10 +164,7 @@ body {
   box-shadow: 0 0 5px #00ffff;
 }
 
-/* ---------------------------------------------------
-   MAP
---------------------------------------------------- */
-
+/* MAP */
 #map {
   width: 100%;
   height: 220px;
@@ -201,10 +176,7 @@ body {
   background: #020608;
 }
 
-/* ---------------------------------------------------
-   GPS BUTTON
---------------------------------------------------- */
-
+/* GPS BUTTON */
 .gps-btn {
   width: 100%;
   margin: 4px 0 6px;
@@ -229,10 +201,7 @@ body {
   background: #000;
 }
 
-/* ---------------------------------------------------
-   STARFIELD BACKGROUND
---------------------------------------------------- */
-
+/* STARFIELD */
 #starfield {
   position: fixed;
   inset: 0;
@@ -244,15 +213,12 @@ body {
   z-index: -3;
 }
 
-/* ---------------------------------------------------
-   ASTRONAUT
---------------------------------------------------- */
-
+/* ASTRONAUT */
 #astronaut {
   position: fixed;
   top: 20%;
   left: 10%;
-  opacity: 0.50;
+  opacity: 0.45;
   z-index: -2;
   animation: astro-drift 40s linear infinite;
   text-align: center;
@@ -299,10 +265,7 @@ body {
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
-/* ---------------------------------------------------
-   CREW DECK
---------------------------------------------------- */
-
+/* CREW DECK */
 #crew-roster li {
   display: flex;
   justify-content: space-between;
@@ -321,4 +284,14 @@ body {
 .crew-status {
   font-size: 11px;
   color: #00ffff;
+}
+
+/* DEEP SPACE NAVIGATION */
+.deepspace-display {
+  background: rgba(0, 5, 20, 0.8);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  padding: 6px 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.3);
 }
