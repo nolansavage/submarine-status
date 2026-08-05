@@ -344,6 +344,58 @@ function showAstronautBubble() {
   }, 5000);
 }
 
+// Deep space navigation
+function updateStarTracker() {
+  const headingEl = document.getElementById("star-heading");
+  const driftEl = document.getElementById("star-drift");
+  if (!headingEl || !driftEl) return;
+
+  const heading = Math.floor(Math.random() * 360);
+  const driftStates = ["STABLE", "MINOR", "MODERATE", "WILD"];
+  const drift = driftStates[Math.floor(Math.random() * driftStates.length)];
+
+  headingEl.textContent = `${heading.toString().padStart(3, "0")}°`;
+  driftEl.textContent = drift;
+}
+
+function pushAsteroidPing(msg) {
+  const log = document.getElementById("asteroid-radar-log");
+  if (!log) return;
+  const li = document.createElement("li");
+  const ts = new Date().toLocaleTimeString();
+  li.textContent = `[${ts}] ${msg}`;
+  log.insertBefore(li, log.firstChild);
+  while (log.children.length > 10) {
+    log.removeChild(log.lastChild);
+  }
+}
+
+function updateAsteroidRadar() {
+  const distances = ["CLOSE", "NEAR", "MID-RANGE", "DISTANT"];
+  const sizes = ["SMALL", "MEDIUM", "LARGE", "CLUSTER"];
+  const dist = distances[Math.floor(Math.random() * distances.length)];
+  const size = sizes[Math.floor(Math.random() * sizes.length)];
+  pushAsteroidPing(`Asteroid contact: ${size}, ${dist}.`);
+}
+
+const galaxySectors = [
+  { sector: "A-01", status: "CALM" },
+  { sector: "B-12", status: "MINOR STORMS" },
+  { sector: "C-07", status: "ASTEROID DENSE" },
+  { sector: "D-44", status: "SOLAR FLARE RISK" },
+  { sector: "E-99", status: "UNKNOWN SIGNALS" }
+];
+
+function updateGalaxyMap() {
+  const sectorEl = document.getElementById("galaxy-sector");
+  const statusEl = document.getElementById("galaxy-status");
+  if (!sectorEl || !statusEl) return;
+
+  const pick = galaxySectors[Math.floor(Math.random() * galaxySectors.length)];
+  sectorEl.textContent = pick.sector;
+  statusEl.textContent = pick.status;
+}
+
 // Init
 document.addEventListener("DOMContentLoaded", () => {
   updateClock();
@@ -388,11 +440,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Crew chatter every 30 seconds
+  // Crew chatter
   setInterval(randomCrewMessage, 30000);
 
   // Astronaut chatter
   setInterval(showAstronautBubble, 25000);
+
+  // Deep space navigation
+  updateStarTracker();
+  updateGalaxyMap();
+  setInterval(updateStarTracker, 20000);
+  setInterval(updateAsteroidRadar, 25000);
+  setInterval(updateGalaxyMap, 30000);
 
   pushCrewLog("Crew deck online. All hands accounted for.");
   pushTerminal("Submarine command console online.");
