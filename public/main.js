@@ -243,7 +243,7 @@ function forceGPSLock() {
   );
 }
 
-// Crew Deck
+// Crew deck
 const crew = [
   { name: "Nolan", role: "Commander", status: "FOCUSED" },
   { name: "Mira", role: "Navigator", status: "PLOTTING COURSE" },
@@ -321,33 +321,41 @@ document.addEventListener("DOMContentLoaded", () => {
   loadRedditPlaceholder();
   randomEngineStatus();
   setupGPSMapInitial();
-  renderCrewRoster();
 
   const input = document.getElementById("terminal-input");
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      handleCommand(input.value);
-      input.value = "";
-    }
-  });
+  if (input) {
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        handleCommand(input.value);
+        input.value = "";
+      }
+    });
+  }
 
   const gpsBtn = document.getElementById("gps-lock-btn");
-  gpsBtn.addEventListener("click", () => {
-    pushTerminal("Navigation control: attempting GPS lock...");
-    forceGPSLock();
-  });
+  if (gpsBtn) {
+    gpsBtn.addEventListener("click", () => {
+      pushTerminal("Navigation control: attempting GPS lock...");
+      forceGPSLock();
+    });
+  }
 
+  // Crew deck wiring
+  renderCrewRoster();
   const crewInput = document.getElementById("crew-chat-input");
-  crewInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && crewInput.value.trim()) {
-      pushCrewLog(`Nolan: ${crewInput.value.trim()}`);
-      crewInput.value = "";
-    }
-  });
+  if (crewInput) {
+    crewInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && crewInput.value.trim()) {
+        pushCrewLog(`Nolan: ${crewInput.value.trim()}`);
+        crewInput.value = "";
+      }
+    });
+  }
+
+  // Astronaut chatter
+  pushCrewLog("Crew deck online. All hands accounted for.");
+  setInterval(showAstronautBubble, 25000);
 
   pushTerminal("Submarine command console online.");
   pushTerminal("Type 'help' for available commands.");
-
-  pushCrewLog("Crew deck online. All hands accounted for.");
-  setInterval(showAstronautBubble, 25000);
 });
