@@ -2,127 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Uptime Command Console</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-
-  <!-- Leaflet CSS for GPS map -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-sA+4J8G8zS+g2zFEpWlZLk52I7Di5urN6p3p3p3pPqo="
-    crossorigin=""
-  />
-
-  <link rel="stylesheet" href="styles.css?v=3">
+  <title>Nolan Interstellar Crew Console</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="crt">
-
-  <div class="container">
-
-    <!-- ROW 1: Clock (small) + Diagnostics (large) -->
-    <div class="row-cluster">
-      <div class="panel small">
-        <h2>MISSION TIME</h2>
-        <div class="row">
-          <span class="label">LOCAL TIME:</span>
-          <span id="clock"></span>
-        </div>
-        <div class="row">
-          <span class="label">UPTIME:</span>
-          <span id="uptime"></span>
-        </div>
-      </div>
-
-      <div class="panel large">
-        <h2>SYSTEM DIAGNOSTICS</h2>
-        <div class="row"><span class="label">OS:</span><span id="os"></span></div>
-        <div class="row"><span class="label">BROWSER:</span><span id="browser"></span></div>
-        <div class="row"><span class="label">CPU CORES:</span><span id="cores"></span></div>
-        <div class="row"><span class="label">MEMORY (GB):</span><span id="memory"></span></div>
-        <div class="row"><span class="label">SCREEN:</span><span id="screen"></span></div>
-        <div class="row"><span class="label">BATTERY:</span><span id="battery"></span></div>
-      </div>
+<body>
+  <div id="starfield"></div>
+  <div id="astronaut">
+    <div class="astro-body"></div>
+    <div class="astro-flag">
+      <span>NOLAN</span>
     </div>
-
-    <!-- ROW 2: Alerts (large) + Sonar (small) + Terminal (medium) -->
-    <div class="row-cluster">
-      <div class="panel large">
-        <h2>SUBMARINE ALERTS</h2>
-        <ul id="alerts-log" class="log"></ul>
-      </div>
-
-      <div class="panel small">
-        <h2>SONAR SWEEP</h2>
-        <div class="sonar-wrapper">
-          <div class="sonar-circle"></div>
-          <div class="sonar-ping"></div>
-        </div>
-      </div>
-
-      <div class="panel medium">
-        <h2>COMMAND CONSOLE</h2>
-        <div id="terminal-output" class="terminal-output"></div>
-        <div class="terminal-input-row">
-          <span class="prompt">></span>
-          <input id="terminal-input" type="text" placeholder="status, diagnostics, sonar, map, help" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ROW 3: Weather (small) + Reddit (medium) + Engine (small) -->
-    <div class="row-cluster">
-      <div class="panel small">
-        <h2>WEATHER — OSHAWA</h2>
-        <div class="row"><span class="label">CONDITIONS:</span><span id="weather-condition"></span></div>
-        <div class="row"><span class="label">TEMP:</span><span id="weather-temp"></span></div>
-        <div class="row"><span class="label">WIND:</span><span id="weather-wind"></span></div>
-        <div class="row"><span class="label">HUMIDITY:</span><span id="weather-humidity"></span></div>
-      </div>
-
-      <div class="panel medium">
-        <h2>COMM ARRAY — REDDIT</h2>
-        <ul id="reddit-trending" class="log"></ul>
-      </div>
-
-      <div class="panel small">
-        <h2>ENGINE STATUS</h2>
-        <div class="row"><span class="label">REACTOR:</span><span id="engine-reactor">ONLINE</span></div>
-        <div class="row"><span class="label">THRUST:</span><span id="engine-thrust">STABLE</span></div>
-        <div class="row"><span class="label">HEAT:</span><span id="engine-heat">NORMAL</span></div>
-        <div class="row"><span class="label">NAVIGATION:</span><span id="engine-nav">OFFLINE</span></div>
-      </div>
-    </div>
-
-    <!-- ROW 4: GPS CONTROL + FULL-WIDTH MAP -->
-    <div class="row-cluster">
-      <div class="panel small">
-        <h2>NAVIGATION CONTROL</h2>
-        <button id="gps-lock-btn" class="gps-btn">ACQUIRE GPS LOCK</button>
-        <div class="row">
-          <span class="label">LAST FIX:</span>
-          <span id="gps-last-fix">NONE</span>
-        </div>
-      </div>
-
-      <div class="panel full">
-        <h2>TACTICAL MAP — LIVE POSITION</h2>
-        <div id="map"></div>
-      </div>
-    </div>
-
+    <div id="astro-bubble" class="speech-bubble"></div>
   </div>
 
-  <!-- Leaflet JS -->
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-o9N1j7kGStbQ8bV+gGkZZgwyXR0YzUKGwEuZTwSb9VQ="
-    crossorigin=""
-  ></script>
+  <div class="console">
+    <header class="console-header">
+      <h1>Nolan Command Console</h1>
+      <p>Subspace Control • Crew Deck • Tactical Systems</p>
+    </header>
 
-  <script src="main.js?v=3"></script>
+    <!-- ROW 1: STATUS / GLITCH / TRANSMISSION -->
+    <section class="row row-1">
+      <div class="panel small" id="system-status">
+        <h2>ENGINE STATUS</h2>
+        <div class="panel-body" id="engineStatusBody">
+          <p>Reactor: STABLE</p>
+          <p>Cooling: NOMINAL</p>
+          <p>Power Grid: ONLINE</p>
+        </div>
+      </div>
+
+      <div class="panel medium" id="glitch-panel">
+        <h2>SYSTEM GLITCHES</h2>
+        <div class="panel-body" id="glitchLog"></div>
+      </div>
+
+      <div class="panel small" id="transmission-panel">
+        <h2>INCOMING TRANSMISSION</h2>
+        <div class="panel-body" id="transmissionBody">
+          <p>No active transmission.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROW 2: NEWS + VISUALIZER -->
+    <section class="row row-2">
+      <div class="panel medium" id="news-panel">
+        <h2>BREAKING NEWS — GLOBAL FEED</h2>
+        <div class="panel-body" id="newsBody"></div>
+      </div>
+
+      <div class="panel small" id="visualizer-panel">
+        <h2>MUSIC VISUALIZER</h2>
+        <div class="panel-body">
+          <div id="visualizerBars">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROW 3: CREW STATUS -->
+    <section class="row row-3">
+      <div class="panel full" id="crew-status-panel">
+        <h2>CREW STATUS</h2>
+        <div class="panel-body">
+          <ul id="crewStatusList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROW 4: CREW DECK (FULL WIDTH) -->
+    <section class="row row-4">
+      <div class="panel full" id="crew-deck">
+        <h2>CREW DECK — COMMS</h2>
+
+        <div id="crewPortraitRow">
+          <!-- portraits injected by JS -->
+        </div>
+
+        <div id="crewLogWrapper">
+          <h3>CREW LOG</h3>
+          <div id="crewLog"></div>
+        </div>
+
+        <div id="crewChatWrapper">
+          <label for="crewInput">> Talk to the crew</label>
+          <input id="crewInput" type="text" placeholder="e.g. crew marla: how’s the reactor?">
+          <button id="crewSend">SEND</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>
+
