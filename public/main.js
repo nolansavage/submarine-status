@@ -82,4 +82,272 @@ function pushAlert(msg) {
   }
 }
 
-function startAlerts()
+function startAlerts() {
+  pushAlert("System startup complete. All stations nominal.");
+  setInterval(() => {
+    const msg = alertMessages[Math.floor(Math.random() * alertMessages.length)];
+    pushAlert(msg);
+  }, 7000);
+}
+
+// Terminal
+function pushTerminal(text) {
+  const out = document.getElementById("terminal-output");
+  const line = document.createElement("div");
+  line.textContent = text;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+}
+
+function handleCommand(cmd) {
+  const c = cmd.trim().toLowerCase();
+  if (!c) return;
+
+  pushTerminal("> " + cmd);
+
+  switch (c) {
+    case "help":
+      pushTerminal("Commands: status, diagnostics, sonar, map, gps, clear, help");
+      break;
+    case "status":
+      pushTerminal("All systems nominal. Mission time increasing.");
+      break;
+    case "diagnostics":
+      pushTerminal("Diagnostics panel shows current system status.");
+      break;
+    case "sonar":
+      pushTerminal("Sonar sweep active. No anomalies detected.");
+      break;
+    case "map":
+      pushTerminal("Tactical map tracking current position or Oshawa fallback.");
+      break;
+    case "gps":
+      pushTerminal("Attempting GPS lock via navigation control...");
+      forceGPSLock();
+      break;
+    case "clear":
+      document.getElementById("terminal-output").innerHTML = "";
+      break;
+    default:
+      pushTerminal("Unknown command. Type 'help' for list.");
+  }
+}
+
+// Weather (mocked for Oshawa)
+function loadWeather() {
+  const conditions = [
+    "Overcast with lake-effect clouds.",
+    "Cold, clear night over Oshawa.",
+    "Rain showers moving in from the west.",
+    "Fog rolling in over the shoreline.",
+    "Windy with scattered clouds.",
+    "Calm skies, high visibility."
+  ];
+  const cond = conditions[Math.floor(Math.random() * conditions.length)];
+  const temp = (Math.random() * 15 - 5).toFixed(1); // -5 to +10
+  const wind = (Math.random() * 30).toFixed(0); // 0–30 km/h
+  const humidity = (60 + Math.random() * 30).toFixed(0); // 60–90%
+
+  document.getElementById("weather-condition").textContent = cond;
+  document.getElementById("weather-temp").textContent = `${temp} °C`;
+  document.getElementById("weather-wind").textContent = `${wind} km/h`;
+  document.getElementById("weather-humidity").textContent = `${humidity}%`;
+}
+
+// Reddit placeholder
+function loadRedditPlaceholder() {
+  const list = document.getElementById("reddit-trending");
+  list.innerHTML = "";
+
+  const items = [
+    "r/AskReddit — \"What’s a subtle sign someone is not okay?\"",
+    "r/technology — \"New GPU architecture shakes up the market.\"",
+    "r/gaming — \"Underrated indie games you should try.\"",
+    "r/canada — \"Lake-effect weather stories from Ontario.\"",
+    "r/programming — \"Show off your side projects.\""
+  ];
+
+  items.forEach(text => {
+    const li = document.createElement("li");
+    li.textContent = text;
+    list.appendChild(li);
+  });
+}
+
+// Engine status (simple flavor)
+function randomEngineStatus() {
+  const heatStates = ["NORMAL", "ELEVATED", "HIGH", "CRITICAL"];
+  const thrustStates = ["STABLE", "INCREASING", "DECREASING"];
+  document.getElementById("engine-heat").textContent =
+    heatStates[Math.floor(Math.random() * heatStates.length)];
+  document.getElementById("engine-thrust").textContent =
+    thrustStates[Math.floor(Math.random() * thrustStates.length)];
+}
+
+// GPS Map (Leaflet)
+let map;
+let gpsMarker;
+
+function initMap(lat, lon) {
+  if (!map) {
+    map = L.map("map").setView([lat, lon], 13);
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 19 }
+    ).addTo(map);
+  } else {
+    map.setView([lat, lon], 13);
+  }
+
+  if (gpsMarker) {
+    gpsMarker.remove();
+  }
+
+  gpsMarker = L.circleMarker([lat, lon], {
+    radius: 6,
+    color: "#00ffff",
+    fillColor: "#00ffff",
+    fillOpacity: 0.8
+  }).addTo(map);
+}
+
+function setupGPSMapInitial() {
+  // Initial map: Oshawa fallback
+  initMap(43.8971, -78.8658);
+  document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
+}
+
+function forceGPSLock() {
+  if (!navigator.geolocation) {
+    pushTerminal("GPS not available on this device.");
+    document.getElementById("engine-nav").textContent = "OFFLINE";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      initMap(latitude, longitude);
+      const fixText = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+      document.getElementById("gps-last-fix").textContent = fixText;
+      document.getElementById("engine-nav").textContent = "LOCKED";
+      pushTerminal(`GPS lock acquired: ${fixText}.`);
+    },
+    () => {
+      pushTerminal("GPS denied or unavailable. Holding position over Oshawa.");
+      document.getElementById("engine-nav").textContent = "OFFLINE";
+      document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
+      initMap(43.8971, -78.8658);
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+
+// Crew Deck
+const crew = [
+  { name: "Nolan", role: "Commander", status: "FOCUSED" },
+  { name: "Mira", role: "Navigator", status: "PLOTTING COURSE" },
+  { name: "Jax", role: "Engineer", status: "TUNING REACTOR" },
+  { name: "Sol", role: "Comms", status: "LISTENING IN" }
+];
+
+function renderCrewRoster() {
+  const roster = document.getElementById("crew-roster");
+  if (!roster) return;
+  roster.innerHTML = "";
+  crew.forEach(member => {
+    const li = document.createElement("li");
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "crew-name";
+    nameSpan.textContent = member.name;
+
+    const roleSpan = document.createElement("span");
+    roleSpan.className = "crew-role";
+    roleSpan.textContent = member.role;
+
+    const statusSpan = document.createElement("span");
+    statusSpan.className = "crew-status";
+    statusSpan.textContent = member.status;
+
+    li.appendChild(nameSpan);
+    li.appendChild(roleSpan);
+    li.appendChild(statusSpan);
+    roster.appendChild(li);
+  });
+}
+
+function pushCrewLog(text) {
+  const log = document.getElementById("crew-log");
+  if (!log) return;
+  const line = document.createElement("div");
+  const ts = new Date().toLocaleTimeString();
+  line.textContent = `[${ts}] ${text}`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+// Astronaut speech
+const astroLines = [
+  "Space is cold. Send snacks.",
+  "Nolan, I drift therefore I am.",
+  "Zero gravity, maximum vibes.",
+  "I’m not lost. Just exploring.",
+  "Crew looks solid from up here.",
+  "Submarine in space? Sure, why not."
+];
+
+function showAstronautBubble() {
+  const bubble = document.getElementById("astro-bubble");
+  if (!bubble) return;
+  const line = astroLines[Math.floor(Math.random() * astroLines.length)];
+  bubble.textContent = line;
+  bubble.style.opacity = 1;
+  setTimeout(() => {
+    bubble.style.opacity = 0;
+  }, 5000);
+}
+
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+  updateClock();
+  updateUptime();
+  setInterval(updateClock, 1000);
+  setInterval(updateUptime, 1000);
+
+  populateDiagnostics();
+  startAlerts();
+  loadWeather();
+  loadRedditPlaceholder();
+  randomEngineStatus();
+  setupGPSMapInitial();
+  renderCrewRoster();
+
+  const input = document.getElementById("terminal-input");
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      handleCommand(input.value);
+      input.value = "";
+    }
+  });
+
+  const gpsBtn = document.getElementById("gps-lock-btn");
+  gpsBtn.addEventListener("click", () => {
+    pushTerminal("Navigation control: attempting GPS lock...");
+    forceGPSLock();
+  });
+
+  const crewInput = document.getElementById("crew-chat-input");
+  crewInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && crewInput.value.trim()) {
+      pushCrewLog(`Nolan: ${crewInput.value.trim()}`);
+      crewInput.value = "";
+    }
+  });
+
+  pushTerminal("Submarine command console online.");
+  pushTerminal("Type 'help' for available commands.");
+
+  pushCrewLog("Crew deck online. All hands accounted for.");
+  setInterval(showAstronautBubble, 25000);
+});
