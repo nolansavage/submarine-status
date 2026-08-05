@@ -2,104 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Nolan Interstellar Crew Console</title>
+  <title>Nolan Command Console</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <div id="starfield"></div>
-  <div id="astronaut">
-    <div class="astro-body"></div>
-    <div class="astro-flag">
-      <span>NOLAN</span>
-    </div>
-    <div id="astro-bubble" class="speech-bubble"></div>
-  </div>
 
+<body>
+
+  <!-- YOUR ORIGINAL DASHBOARD CONTENT -->
   <div class="console">
     <header class="console-header">
       <h1>Nolan Command Console</h1>
-      <p>Subspace Control • Crew Deck • Tactical Systems</p>
+      <p>Subspace Control • Tactical Systems • Monitoring</p>
     </header>
 
-    <!-- ROW 1: STATUS / GLITCH / TRANSMISSION -->
-    <section class="row row-1">
-      <div class="panel small" id="system-status">
+    <!-- ROW 1 -->
+    <section class="row">
+      <div class="panel small">
         <h2>ENGINE STATUS</h2>
-        <div class="panel-body" id="engineStatusBody">
+        <div class="panel-body">
           <p>Reactor: STABLE</p>
           <p>Cooling: NOMINAL</p>
           <p>Power Grid: ONLINE</p>
         </div>
       </div>
 
-      <div class="panel medium" id="glitch-panel">
-        <h2>SYSTEM GLITCHES</h2>
-        <div class="panel-body" id="glitchLog"></div>
-      </div>
-
-      <div class="panel small" id="transmission-panel">
-        <h2>INCOMING TRANSMISSION</h2>
-        <div class="panel-body" id="transmissionBody">
-          <p>No active transmission.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ROW 2: NEWS + VISUALIZER -->
-    <section class="row row-2">
-      <div class="panel medium" id="news-panel">
-        <h2>BREAKING NEWS — GLOBAL FEED</h2>
-        <div class="panel-body" id="newsBody"></div>
-      </div>
-
-      <div class="panel small" id="visualizer-panel">
-        <h2>MUSIC VISUALIZER</h2>
+      <div class="panel medium">
+        <h2>DATA LOG</h2>
         <div class="panel-body">
-          <div id="visualizerBars">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-          </div>
+          <p>System initialized.</p>
+          <p>Awaiting input...</p>
         </div>
       </div>
-    </section>
 
-    <!-- ROW 3: CREW STATUS -->
-    <section class="row row-3">
-      <div class="panel full" id="crew-status-panel">
-        <h2>CREW STATUS</h2>
+      <div class="panel small">
+        <h2>LOCATION</h2>
         <div class="panel-body">
-          <ul id="crewStatusList"></ul>
+          <p>GPS: ONLINE</p>
+          <p>Signal: STRONG</p>
         </div>
       </div>
     </section>
 
-    <!-- ROW 4: CREW DECK (FULL WIDTH) -->
-    <section class="row row-4">
-      <div class="panel full" id="crew-deck">
-        <h2>CREW DECK — COMMS</h2>
-
-        <div id="crewPortraitRow">
-          <!-- portraits injected by JS -->
+    <!-- ROW 2 -->
+    <section class="row">
+      <div class="panel medium">
+        <h2>WEATHER</h2>
+        <div class="panel-body">
+          <p>Clear skies.</p>
+          <p>Temp: 22°C</p>
         </div>
+      </div>
 
-        <div id="crewLogWrapper">
-          <h3>CREW LOG</h3>
-          <div id="crewLog"></div>
-        </div>
-
-        <div id="crewChatWrapper">
-          <label for="crewInput">> Talk to the crew</label>
-          <input id="crewInput" type="text" placeholder="e.g. crew marla: how’s the reactor?">
-          <button id="crewSend">SEND</button>
+      <div class="panel medium">
+        <h2>NOTIFICATIONS</h2>
+        <div class="panel-body">
+          <p>No new alerts.</p>
         </div>
       </div>
     </section>
+
+    <!-- ROW 3 -->
+    <section class="row">
+      <div class="panel full">
+        <h2>EVENT LOG</h2>
+        <div class="panel-body">
+          <p>System running smoothly.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ⭐ ASTRONAUT MODULE (ADDED UNDERNEATH EVERYTHING) ⭐ -->
+  <div id="starfield"></div>
+
+  <div id="astronaut">
+    <div class="astro-body">🧑‍🚀</div>
+    <div class="astro-flag">
+      =|<br>|<br><span>NOLAN</span>
+    </div>
+    <div id="astro-bubble" class="speech-bubble"></div>
   </div>
 
   <script src="main.js"></script>
 </body>
 </html>
-
