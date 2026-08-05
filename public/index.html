@@ -9,13 +9,8 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    crossorigin=""
-  />
-
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body class="crt">
 
@@ -144,10 +139,15 @@
       </div>
     </div>
 
-    <!-- ROW 7: AERIAL TRAFFIC MONITOR -->
+    <!-- ROW 7: AERIAL TRAFFIC MONITOR (MAP + LOG SIDE BY SIDE) -->
     <div class="row-cluster">
-      <div class="panel full">
-        <h2>AERIAL TRAFFIC MONITOR — LIVE AIRSPACE</h2>
+      <div class="panel medium">
+        <h2>AERIAL TRAFFIC MAP</h2>
+        <div id="air-traffic-map"></div>
+      </div>
+
+      <div class="panel medium">
+        <h2>AIRSPACE LOG</h2>
         <ul id="air-traffic-log" class="log"></ul>
       </div>
     </div>
@@ -166,6 +166,6 @@
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="main.js?v=6"></script>
+  <script src="main.js?v=7"></script>
 </body>
 </html>
