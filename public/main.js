@@ -107,7 +107,7 @@ function handleCommand(cmd) {
 
   switch (c) {
     case "help":
-      pushTerminal("Commands: status, diagnostics, sonar, clear, map, help");
+      pushTerminal("Commands: status, diagnostics, sonar, map, gps, clear, help");
       break;
     case "status":
       pushTerminal("All systems nominal. Mission time increasing.");
@@ -119,7 +119,11 @@ function handleCommand(cmd) {
       pushTerminal("Sonar sweep active. No anomalies detected.");
       break;
     case "map":
-      pushTerminal("Tactical map tracking current position.");
+      pushTerminal("Tactical map tracking current position or Oshawa fallback.");
+      break;
+    case "gps":
+      pushTerminal("Attempting GPS lock via navigation control...");
+      forceGPSLock();
       break;
     case "clear":
       document.getElementById("terminal-output").innerHTML = "";
@@ -182,6 +186,7 @@ function randomEngineStatus() {
 
 // GPS Map (Leaflet)
 let map;
+let gpsMarker;
 
 function initMap(lat, lon) {
   if (!map) {
@@ -194,7 +199,11 @@ function initMap(lat, lon) {
     map.setView([lat, lon], 13);
   }
 
-  L.circleMarker([lat, lon], {
+  if (gpsMarker) {
+    gpsMarker.remove();
+  }
+
+  gpsMarker = L.circleMarker([lat, lon], {
     radius: 6,
     color: "#00ffff",
     fillColor: "#00ffff",
@@ -202,11 +211,16 @@ function initMap(lat, lon) {
   }).addTo(map);
 }
 
-function setupGPSMap() {
+function setupGPSMapInitial() {
+  // Initial map: Oshawa fallback
+  initMap(43.8971, -78.8658);
+  document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
+}
+
+function forceGPSLock() {
   if (!navigator.geolocation) {
-    // fallback to Oshawa
-    initMap(43.8971, -78.8658);
-    pushTerminal("GPS not available. Centering map on Oshawa.");
+    pushTerminal("GPS not available on this device.");
+    document.getElementById("engine-nav").textContent = "OFFLINE";
     return;
   }
 
@@ -214,11 +228,16 @@ function setupGPSMap() {
     (pos) => {
       const { latitude, longitude } = pos.coords;
       initMap(latitude, longitude);
-      pushTerminal(`GPS lock acquired: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}.`);
+      const fixText = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+      document.getElementById("gps-last-fix").textContent = fixText;
+      document.getElementById("engine-nav").textContent = "LOCKED";
+      pushTerminal(`GPS lock acquired: ${fixText}.`);
     },
-    () => {
+    (err) => {
+      pushTerminal("GPS denied or unavailable. Holding position over Oshawa.");
+      document.getElementById("engine-nav").textContent = "OFFLINE";
+      document.getElementById("gps-last-fix").textContent = "OSHAWA (FALLBACK)";
       initMap(43.8971, -78.8658);
-      pushTerminal("GPS denied. Centering map on Oshawa.");
     },
     { enableHighAccuracy: true, timeout: 8000 }
   );
@@ -236,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadWeather();
   loadRedditPlaceholder();
   randomEngineStatus();
-  setupGPSMap();
+  setupGPSMapInitial();
 
   const input = document.getElementById("terminal-input");
   input.addEventListener("keydown", (e) => {
@@ -246,6 +265,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  const gpsBtn = document.getElementById("gps-lock-btn");
+  gpsBtn.addEventListener("click", () => {
+    pushTerminal("Navigation control: attempting GPS lock...");
+    forceGPSLock();
+  });
+
   pushTerminal("Submarine command console online.");
   pushTerminal("Type 'help' for available commands.");
 });
+
