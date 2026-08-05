@@ -1,104 +1,25 @@
+/* GLOBAL */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Consolas", monospace;
+  box-sizing: border-box;
+  font-family: Consolas, monospace;
 }
 
 body {
   background: #020611;
   color: #c7f9ff;
-  overflow: hidden;
 }
 
-/* Starfield */
-
-#starfield {
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.15) 1px, transparent 0),
-    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.1) 1px, transparent 0),
-    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.12) 1px, transparent 0);
-  opacity: 0.25;
-  z-index: -3;
-}
-
-/* Astronaut */
-
-#astronaut {
-  position: fixed;
-  width: 120px;
-  height: 160px;
-  top: 20%;
-  left: 10%;
-  z-index: -2;
-  opacity: 0.15;
-  animation: astro-drift 40s linear infinite;
-}
-
-.astro-body {
-  width: 60px;
-  height: 80px;
-  margin: 20px auto;
-  border-radius: 12px;
-  border: 2px solid #7fffd4;
-  box-shadow: 0 0 12px #7fffd4;
-}
-
-.astro-flag {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.astro-flag::before {
-  content: "=|";
-  color: #7fffd4;
-  font-weight: bold;
-}
-
-.astro-flag::after {
-  content: "|";
-  color: #7fffd4;
-}
-
-.astro-flag span {
-  margin-top: 6px;
-  font-size: 10px;
-  letter-spacing: 2px;
-}
-
-/* Astronaut speech bubble */
-
-.speech-bubble {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  max-width: 180px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  background: rgba(5, 20, 40, 0.9);
-  border: 1px solid #7fffd4;
-  font-size: 11px;
-  opacity: 0;
-  transition: opacity 0.4s;
-}
-
-/* Console layout */
-
+/* CONSOLE */
 .console {
-  position: relative;
   width: 90%;
   max-width: 1200px;
-  margin: 24px auto;
+  margin: 20px auto;
   padding: 12px;
   border: 2px solid #0ff;
-  box-shadow: 0 0 18px #0ff;
   background: rgba(0, 0, 10, 0.85);
+  box-shadow: 0 0 18px #0ff;
 }
 
 .console-header {
@@ -129,11 +50,10 @@ body {
   padding: 8px;
 }
 
-.panel h2, .panel h3 {
+.panel h2 {
   font-size: 13px;
   margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .panel-body {
@@ -142,145 +62,68 @@ body {
   overflow-y: auto;
 }
 
-/* Sizes */
+.small { flex: 1; }
+.medium { flex: 2; }
+.full { flex: 1; width: 100%; }
 
-.small {
-  flex: 1;
+/* STARFIELD */
+#starfield {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.15) 1px, transparent 0),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.1) 1px, transparent 0),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.12) 1px, transparent 0);
+  opacity: 0.25;
+  z-index: -3;
 }
 
-.medium {
-  flex: 2;
+/* ASTRONAUT */
+#astronaut {
+  position: fixed;
+  top: 20%;
+  left: 10%;
+  opacity: 0.15;
+  z-index: -2;
+  animation: astro-drift 40s linear infinite;
+  text-align: center;
+  color: #7fffd4;
+  font-size: 16px;
 }
 
-.full {
-  flex: 1;
-  width: 100%;
+.astro-body {
+  font-size: 32px;
 }
 
-/* Visualizer */
-
-#visualizerBars {
-  display: flex;
-  align-items: flex-end;
-  gap: 4px;
-  height: 60px;
-}
-
-#visualizerBars .bar {
-  flex: 1;
-  background: linear-gradient(to top, #0ff, #7fffd4);
-  height: 20px;
-  opacity: 0.7;
-  transition: height 0.2s;
-}
-
-/* Crew deck */
-
-#crew-deck {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-#crewPortraitRow {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.crew-portrait {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
-  border: 1px solid #0ff;
-  border-radius: 4px;
-  background: rgba(0, 15, 25, 0.9);
-  font-size: 11px;
-}
-
-.crew-portrait img {
-  width: 32px;
-  height: 32px;
-  image-rendering: pixelated;
-  border-radius: 3px;
-  border: 1px solid #7fffd4;
-}
-
-.crew-mood {
-  font-size: 10px;
-  opacity: 0.7;
-}
-
-#crewLogWrapper {
-  border-top: 1px dashed #0ff;
-  padding-top: 4px;
-}
-
-#crewLog {
-  max-height: 160px;
-  overflow-y: auto;
-  font-size: 11px;
-}
-
-.crew-line {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
-.crew-line img {
-  width: 24px;
-  height: 24px;
-  image-rendering: pixelated;
-  border-radius: 3px;
-  border: 1px solid #7fffd4;
-}
-
-.crew-line span.name {
-  font-weight: bold;
-  margin-right: 4px;
-}
-
-#crewChatWrapper {
-  display: flex;
-  gap: 6px;
+.astro-flag {
   margin-top: 6px;
+  font-size: 14px;
+  line-height: 14px;
 }
 
-#crewInput {
-  flex: 1;
-  padding: 4px 6px;
-  background: #020611;
-  border: 1px solid #0ff;
-  color: #c7f9ff;
+.astro-flag span {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+/* ASTRONAUT SPEECH BUBBLE */
+.speech-bubble {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding: 6px 8px;
+  background: rgba(5, 20, 40, 0.9);
+  border: 1px solid #7fffd4;
+  border-radius: 6px;
   font-size: 11px;
+  opacity: 0;
+  transition: opacity 0.4s;
+  max-width: 180px;
 }
 
-#crewSend {
-  padding: 4px 10px;
-  background: #0ff;
-  border: none;
-  color: #020611;
-  font-size: 11px;
-  cursor: pointer;
-}
-
-/* Scrollbars */
-
-.panel-body::-webkit-scrollbar,
-#crewLog::-webkit-scrollbar {
-  width: 4px;
-}
-
-.panel-body::-webkit-scrollbar-thumb,
-#crewLog::-webkit-scrollbar-thumb {
-  background: #0ff;
-}
-
-/* Animations */
-
+/* DRIFT ANIMATION */
 @keyframes astro-drift {
   0%   { transform: translate(0, 0) rotate(0deg); }
   25%  { transform: translate(40px, -20px) rotate(4deg); }
@@ -288,3 +131,4 @@ body {
   75%  { transform: translate(40px, 30px) rotate(2deg); }
   100% { transform: translate(0, 0) rotate(0deg); }
 }
+
