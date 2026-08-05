@@ -10,7 +10,7 @@
   <meta http-equiv="Expires" content="0" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body class="crt">
 
@@ -139,7 +139,7 @@
       </div>
     </div>
 
-    <!-- ROW 7: AERIAL TRAFFIC MONITOR (MAP + LOG SIDE BY SIDE) -->
+    <!-- ROW 7: AERIAL TRAFFIC MONITOR -->
     <div class="row-cluster">
       <div class="panel medium">
         <h2>AERIAL TRAFFIC MAP</h2>
@@ -152,9 +152,21 @@
       </div>
     </div>
 
+    <!-- ROW 8: EARTHQUAKE MONITOR -->
+    <div class="row-cluster">
+      <div class="panel medium">
+        <h2>SEISMIC MAP</h2>
+        <div id="quake-map"></div>
+      </div>
+
+      <div class="panel medium">
+        <h2>SEISMIC LOG</h2>
+        <ul id="quake-log" class="log"></ul>
+      </div>
+    </div>
+
   </div>
 
-  <!-- ASTRONAUT + STARFIELD -->
   <div id="starfield"></div>
 
   <div id="astronaut">
@@ -166,6 +178,6 @@
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="main.js?v=7"></script>
+  <script src="main.js?v=8"></script>
 </body>
 </html>
