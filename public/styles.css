@@ -188,3 +188,29 @@ body {
 .leaflet-container {
   background: #020608;
 }
+
+/* GPS button */
+.gps-btn {
+  width: 100%;
+  margin: 4px 0 6px;
+  padding: 6px 8px;
+  background: #021015;
+  border: 1px solid #00ffff;
+  color: #00ffff;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+}
+
+.gps-btn:hover {
+  background: #032028;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+}
+
+.gps-btn:active {
+  background: #000;
+}
+
