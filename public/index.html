@@ -9,14 +9,13 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <!-- Leaflet CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     crossorigin=""
   />
 
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body class="crt">
 
@@ -104,7 +103,7 @@
       </div>
     </div>
 
-    <!-- ⭐ ROW 5 — CREW DECK ⭐ -->
+    <!-- ROW 5: CREW DECK -->
     <div class="row-cluster">
       <div class="panel medium">
         <h2>CREW ROSTER</h2>
@@ -121,9 +120,33 @@
       </div>
     </div>
 
+    <!-- ROW 6: DEEP SPACE NAVIGATION -->
+    <div class="row-cluster">
+      <div class="panel medium">
+        <h2>STAR TRACKER</h2>
+        <div id="star-tracker-display" class="deepspace-display">
+          HEADING: <span id="star-heading">000°</span><br>
+          DRIFT: <span id="star-drift">STABLE</span>
+        </div>
+      </div>
+
+      <div class="panel medium">
+        <h2>ASTEROID RADAR</h2>
+        <ul id="asteroid-radar-log" class="log"></ul>
+      </div>
+
+      <div class="panel medium">
+        <h2>GALAXY MAP</h2>
+        <div id="galaxy-map" class="deepspace-display">
+          SECTOR: <span id="galaxy-sector">A-01</span><br>
+          STATUS: <span id="galaxy-status">CALM</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- ⭐ ASTRONAUT + STARFIELD ⭐ -->
+  <!-- ASTRONAUT + STARFIELD -->
   <div id="starfield"></div>
 
   <div id="astronaut">
@@ -134,10 +157,7 @@
     <div id="astro-bubble" class="speech-bubble"></div>
   </div>
 
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <script src="main.js?v=4"></script>
+  <script src="main.js?v=5"></script>
 </body>
 </html>
-
