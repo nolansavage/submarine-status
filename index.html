@@ -5,93 +5,84 @@
   <title>Uptime Command Console</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Prevent caching so Render always loads the newest version -->
+  <!-- No-cache to fight stale deploys -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    body {
-      background: #0a0f0f;
-      color: #c8f7dc;
-      font-family: "Courier New", monospace;
-    }
-
-    .crt {
-      position: relative;
-    }
-
-    .crt::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(0, 255, 0, 0.03),
-        rgba(0, 255, 0, 0.03) 2px,
-        transparent 2px,
-        transparent 4px
-      );
-    }
-
-    .lamp {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      margin-right: 10px;
-      box-shadow: 0 0 8px currentColor;
-    }
-
-    /* Reddit panel styling */
-    .reddit-panel {
-      background: rgba(0, 20, 40, 0.7);
-      border: 2px solid #0ff;
-      padding: 15px;
-      margin: 20px 0;
-      font-family: "Courier New", monospace;
-      color: #0ff;
-      text-shadow: 0 0 5px #0ff;
-    }
-
-    .reddit-panel ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .reddit-panel li {
-      margin: 6px 0;
-      padding: 4px 0;
-      border-bottom: 1px solid rgba(0,255,255,0.2);
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css?v=1">
 </head>
+<body class="crt">
 
-<body class="min-h-screen crt">
+  <div class="container">
+    <h1 class="title">SYSTEM STATUS</h1>
 
-  <div class="max-w-3xl mx-auto py-12 px-6">
-    <h1 class="text-4xl font-bold mb-6 text-center tracking-widest">
-      SYSTEM STATUS
-    </h1>
-
-    <!-- ⭐ Reddit Trending Panel -->
-    <div class="panel reddit-panel">
-      <h2>COMMUNICATIONS ARRAY — REDDIT TRENDS</h2>
-      <ul id="reddit-trending"></ul>
+    <!-- Clock + Uptime -->
+    <div class="panel">
+      <h2>MISSION TIME</h2>
+      <div class="row">
+        <span class="label">LOCAL TIME:</span>
+        <span id="clock"></span>
+      </div>
+      <div class="row">
+        <span class="label">UPTIME:</span>
+        <span id="uptime"></span>
+      </div>
     </div>
 
+    <!-- System Diagnostics -->
+    <div class="panel">
+      <h2>SYSTEM DIAGNOSTICS</h2>
+      <div class="row"><span class="label">OS:</span><span id="os"></span></div>
+      <div class="row"><span class="label">BROWSER:</span><span id="browser"></span></div>
+      <div class="row"><span class="label">CPU CORES:</span><span id="cores"></span></div>
+      <div class="row"><span class="label">MEMORY (GB):</span><span id="memory"></span></div>
+      <div class="row"><span class="label">SCREEN:</span><span id="screen"></span></div>
+      <div class="row"><span class="label">BATTERY:</span><span id="battery"></span></div>
+    </div>
+
+    <!-- Submarine Alerts -->
+    <div class="panel">
+      <h2>SUBMARINE ALERTS</h2>
+      <ul id="alerts-log" class="log"></ul>
+    </div>
+
+    <!-- Sonar Sweep -->
+    <div class="panel">
+      <h2>SONAR SWEEP</h2>
+      <div class="sonar-wrapper">
+        <div class="sonar-circle"></div>
+        <div class="sonar-ping"></div>
+      </div>
+    </div>
+
+    <!-- Terminal Commands -->
+    <div class="panel">
+      <h2>COMMAND CONSOLE</h2>
+      <div id="terminal-output" class="terminal-output"></div>
+      <div class="terminal-input-row">
+        <span class="prompt">></span>
+        <input id="terminal-input" type="text" placeholder="type: status, diagnostics, sonar, help" />
+      </div>
+    </div>
+
+    <!-- Weather Panel (Oshawa) -->
+    <div class="panel">
+      <h2>WEATHER ARRAY — OSHAWA</h2>
+      <div class="row"><span class="label">CONDITIONS:</span><span id="weather-condition"></span></div>
+      <div class="row"><span class="label">TEMPERATURE:</span><span id="weather-temp"></span></div>
+      <div class="row"><span class="label">WIND:</span><span id="weather-wind"></span></div>
+      <div class="row"><span class="label">HUMIDITY:</span><span id="weather-humidity"></span></div>
+    </div>
+
+    <!-- Reddit Panel (placeholder for now) -->
+    <div class="panel">
+      <h2>COMMUNICATIONS ARRAY — REDDIT TRENDS</h2>
+      <ul id="reddit-trending" class="log"></ul>
+    </div>
   </div>
 
-  <!-- ⭐ External JS file (fixes Render caching issues) -->
-  <script src="reddit.js?v=1"></script>
-
+  <script src="main.js?v=1"></script>
 </body>
 </html>
 
