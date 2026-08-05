@@ -396,6 +396,51 @@ function updateGalaxyMap() {
   statusEl.textContent = pick.status;
 }
 
+// Aerial Traffic Monitor — Live Aircraft
+function pushAirTraffic(msg) {
+  const log = document.getElementById("air-traffic-log");
+  if (!log) return;
+
+  const li = document.createElement("li");
+  const ts = new Date().toLocaleTimeString();
+  li.textContent = `[${ts}] ${msg}`;
+
+  log.insertBefore(li, log.firstChild);
+
+  while (log.children.length > 15) {
+    log.removeChild(log.lastChild);
+  }
+}
+
+async function updateAirTraffic() {
+  try {
+    // Oshawa bounding box (approx)
+    const url =
+      "https://opensky-network.org/api/states/all?lamin=43.8&lomin=-79.1&lamax=44.1&lomax=-78.7";
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.states || data.states.length === 0) {
+      pushAirTraffic("No aircraft detected in local airspace.");
+      return;
+    }
+
+    const plane = data.states[0]; // first plane
+
+    const callsign = plane[1] ? plane[1].trim() : "UNKNOWN";
+    const altitude = plane[13] ? Math.round(plane[13]) + " m" : "N/A";
+    const velocity = plane[9] ? Math.round(plane[9]) + " m/s" : "N/A";
+    const heading = plane[10] ? Math.round(plane[10]) + "°" : "N/A";
+
+    pushAirTraffic(
+      `Plane ${callsign} — Alt: ${altitude}, Speed: ${velocity}, Heading: ${heading}`
+    );
+  } catch (err) {
+    pushAirTraffic("Airspace scan failed — connection issue.");
+  }
+}
+
 // Init
 document.addEventListener("DOMContentLoaded", () => {
   updateClock();
@@ -452,6 +497,10 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateStarTracker, 20000);
   setInterval(updateAsteroidRadar, 25000);
   setInterval(updateGalaxyMap, 30000);
+
+  // Aerial Traffic Monitor
+  updateAirTraffic();
+  setInterval(updateAirTraffic, 20000);
 
   pushCrewLog("Crew deck online. All hands accounted for.");
   pushTerminal("Submarine command console online.");
