@@ -35,21 +35,10 @@ body {
 }
 
 /* Size classes */
-.panel.small {
-  flex: 1;
-}
-
-.panel.medium {
-  flex: 2;
-}
-
-.panel.large {
-  flex: 3;
-}
-
-.panel.full {
-  width: 100%;
-}
+.panel.small { flex: 1; }
+.panel.medium { flex: 2; }
+.panel.large { flex: 3; }
+.panel.full { width: 100%; }
 
 /* Rows inside panels */
 .row {
@@ -132,12 +121,8 @@ body {
 }
 
 @keyframes sonar-rotate {
-  from {
-    transform: translateX(-50%) rotate(0deg);
-  }
-  to {
-    transform: translateX(-50%) rotate(360deg);
-  }
+  from { transform: translateX(-50%) rotate(0deg); }
+  to { transform: translateX(-50%) rotate(360deg); }
 }
 
 /* Terminal */
@@ -184,7 +169,6 @@ body {
   box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.3);
 }
 
-/* Leaflet dark tweak */
 .leaflet-container {
   background: #020608;
 }
@@ -212,4 +196,74 @@ body {
 
 .gps-btn:active {
   background: #000;
+}
+
+/* ---------------------------------------------------
+   ⭐ ASTRONAUT MODULE (ADDED WITHOUT TOUCHING ANYTHING)
+--------------------------------------------------- */
+
+/* Starfield background */
+#starfield {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.15) 1px, transparent 0),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.1) 1px, transparent 0),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.12) 1px, transparent 0);
+  opacity: 0.25;
+  z-index: -3;
+}
+
+/* Astronaut */
+#astronaut {
+  position: fixed;
+  top: 20%;
+  left: 10%;
+  opacity: 0.15;
+  z-index: -2;
+  animation: astro-drift 40s linear infinite;
+  text-align: center;
+  color: #7fffd4;
+  font-size: 16px;
+}
+
+.astro-body {
+  font-size: 32px;
+}
+
+.astro-flag {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.astro-flag span {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+/* Astronaut speech bubble */
+.speech-bubble {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding: 6px 8px;
+  background: rgba(5, 20, 40, 0.9);
+  border: 1px solid #7fffd4;
+  border-radius: 6px;
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity 0.4s;
+  max-width: 180px;
+}
+
+/* Drifting animation */
+@keyframes astro-drift {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  25%  { transform: translate(40px, -20px) rotate(4deg); }
+  50%  { transform: translate(80px, 10px) rotate(-3deg); }
+  75%  { transform: translate(40px, 30px) rotate(2deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
 }
